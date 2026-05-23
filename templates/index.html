@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Chess Openings Academy — Learn Classic Openings{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Chess Openings Academy</h1>
+  <p class="hero-subtitle">
+    Step-by-step guides for four classic openings — each with a live chess board,
+    move-by-move explanations, and key ideas explained in plain English.
+    Perfect for beginners and improving players alike.
+  </p>
+</section>
+
+<section class="openings-grid-section">
+  <h2 class="section-title">Choose an Opening</h2>
+  <div class="openings-grid">
+    {% for opening in openings %}
+    <a href="/opening/{{ opening.id }}" class="opening-card">
+      <div class="card-emoji">{{ opening.emoji }}</div>
+      <div class="card-body">
+        <h3>{{ opening.name }}</h3>
+        <span class="color-badge color-{{ opening.color | lower }}">{{ opening.color }}</span>
+        <p class="tagline">{{ opening.tagline }}</p>
+        <span class="explore-link">Explore →</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="about-section">
+  <h2>How to use this site</h2>
+  <div class="tips-grid">
+    <div class="tip">
+      <div class="tip-icon">1</div>
+      <div>
+        <strong>Pick an opening</strong>
+        <p>Choose one of the four openings above. Each has a full introduction and several key variations.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">2</div>
+      <div>
+        <strong>Follow the moves</strong>
+        <p>Use the Next and Previous buttons to step through each move. The board updates automatically.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">3</div>
+      <div>
+        <strong>Read the explanations</strong>
+        <p>Each move comes with a plain-English explanation of why it's played and what it achieves.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">4</div>
+      <div>
+        <strong>Explore variations</strong>
+        <p>Switch between the main line and variations to understand how the opening branches.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

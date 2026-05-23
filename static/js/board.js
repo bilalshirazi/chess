@@ -1,0 +1,152 @@
+/* Chess Openings Academy — board controller */
+
+(function () {
+  const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+  let board = null;
+  let currentLineIndex = 0;
+  let currentStepIndex = -1; // -1 = start position (before any moves)
+
+  // ---------- helpers ----------
+
+  function currentLine() {
+    return OPENING_DATA.lines[currentLineIndex];
+  }
+
+  function currentSteps() {
+    return currentLine().steps;
+  }
+
+  // ---------- board init ----------
+
+  function initBoard(fen) {
+    if (board) board.destroy();
+    board = Chessboard('chessboard', {
+      position: fen || START_FEN,
+      pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
+      draggable: false,
+    });
+  }
+
+  // ---------- render state ----------
+
+  function renderMoveList() {
+    const list = document.getElementById('moveList');
+    list.innerHTML = '';
+    const steps = currentSteps();
+
+    steps.forEach(function (step, idx) {
+      // Insert move number chip before White's move
+      // Detect White move = the step before this one was Black (odd index) OR this is index 0
+      // Simpler: parse move number from SAN
+      const san = step.san || '';
+      const match = san.match(/^(\d+)\./);
+      if (match) {
+        const numChip = document.createElement('span');
+        numChip.className = 'move-chip move-number';
+        numChip.textContent = match[1] + '.';
+        list.appendChild(numChip);
+      }
+
+      const chip = document.createElement('span');
+      chip.className = 'move-chip' + (idx === currentStepIndex ? ' active' : '');
+      // Show just the piece/square part (strip move number from SAN)
+      chip.textContent = san.replace(/^\d+\.\.\.\s*/, '').replace(/^\d+\.\s*/, '');
+      chip.dataset.idx = idx;
+      chip.addEventListener('click', function () {
+        goToStep(idx);
+      });
+      list.appendChild(chip);
+    });
+  }
+
+  function renderExplanation() {
+    const box = document.getElementById('explanationBox');
+    if (currentStepIndex < 0) {
+      box.innerHTML = '<p>Press ▶ to start stepping through the moves, or click any move in the list.</p>';
+      return;
+    }
+    const step = currentSteps()[currentStepIndex];
+    const san = step.san || step.move;
+    box.innerHTML =
+      '<strong style="color:var(--accent-2,#e8c97a);font-size:1.05rem;">' + san + '</strong>' +
+      '<p style="margin-top:0.5rem;">' + step.explanation + '</p>';
+  }
+
+  function renderCounter() {
+    const el = document.getElementById('moveCounter');
+    const steps = currentSteps();
+    if (currentStepIndex < 0) {
+      el.textContent = 'Start position · ' + steps.length + ' moves in this line';
+    } else {
+      el.textContent = 'Move ' + (currentStepIndex + 1) + ' of ' + steps.length;
+    }
+  }
+
+  function renderAll() {
+    const fen = currentStepIndex < 0
+      ? START_FEN
+      : currentSteps()[currentStepIndex].fen;
+    board.position(fen, true);
+    renderMoveList();
+    renderExplanation();
+    renderCounter();
+  }
+
+  // ---------- navigation ----------
+
+  function goToStep(idx) {
+    const steps = currentSteps();
+    if (idx < 0) idx = -1;
+    if (idx >= steps.length) idx = steps.length - 1;
+    currentStepIndex = idx;
+    renderAll();
+  }
+
+  function goToStart() { goToStep(-1); }
+  function goToPrev()  { goToStep(currentStepIndex - 1); }
+  function goToNext()  { goToStep(currentStepIndex + 1); }
+  function goToEnd()   { goToStep(currentSteps().length - 1); }
+
+  // ---------- variation tabs ----------
+
+  function switchLine(lineIdx) {
+    currentLineIndex = lineIdx;
+    currentStepIndex = -1;
+
+    // Update tab styles
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.classList.toggle('active', parseInt(btn.dataset.lineIndex) === lineIdx);
+    });
+
+    initBoard(START_FEN);
+    renderAll();
+  }
+
+  // ---------- keyboard support ----------
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToNext();
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goToPrev();
+    if (e.key === 'Home') goToStart();
+    if (e.key === 'End')  goToEnd();
+  });
+
+  // ---------- init ----------
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initBoard(START_FEN);
+    renderAll();
+
+    document.getElementById('btnStart').addEventListener('click', goToStart);
+    document.getElementById('btnPrev').addEventListener('click', goToPrev);
+    document.getElementById('btnNext').addEventListener('click', goToNext);
+    document.getElementById('btnEnd').addEventListener('click', goToEnd);
+
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        switchLine(parseInt(btn.dataset.lineIndex));
+      });
+    });
+  });
+})();

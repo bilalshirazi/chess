@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ opening.name }} — Chess Openings Academy{% endblock %}
+
+{% block content %}
+<div class="opening-page">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/">All Openings</a> <span>›</span> <span>{{ opening.name }}</span>
+  </nav>
+
+  <!-- Opening Header -->
+  <div class="opening-header">
+    <div class="opening-title-row">
+      <span class="opening-emoji">{{ opening.emoji }}</span>
+      <div>
+        <h1>{{ opening.name }}</h1>
+        <span class="color-badge color-{{ opening.color | lower }}">Played by {{ opening.color }}</span>
+      </div>
+    </div>
+    <p class="opening-tagline">{{ opening.tagline }}</p>
+  </div>
+
+  <!-- Overview -->
+  <section class="overview-section">
+    <h2>Overview</h2>
+    <p class="overview-text">{{ opening.overview }}</p>
+    <div class="key-ideas">
+      <h3>Key Ideas</h3>
+      <ul>
+        {% for idea in opening.key_ideas %}
+        <li>{{ idea }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Board + Moves section -->
+  <section class="board-section">
+    <h2>Explore the Moves</h2>
+
+    <!-- Variation Tabs -->
+    <div class="variation-tabs" id="variationTabs">
+      {% for line in opening.lines %}
+      <button class="tab-btn {% if loop.first %}active{% endif %}"
+              data-line-index="{{ loop.index0 }}">
+        {{ line.name }}
+      </button>
+      {% endfor %}
+    </div>
+
+    <div class="board-layout">
+      <!-- Chess board -->
+      <div class="board-container">
+        <div id="chessboard"></div>
+        <div class="board-controls">
+          <button id="btnStart" title="Go to start">⏮</button>
+          <button id="btnPrev" title="Previous move">◀</button>
+          <button id="btnNext" title="Next move">▶</button>
+          <button id="btnEnd" title="Go to end">⏭</button>
+        </div>
+        <div class="move-counter" id="moveCounter">Start position</div>
+      </div>
+
+      <!-- Move list + explanation -->
+      <div class="moves-panel">
+        <div class="move-list" id="moveList"></div>
+        <div class="explanation-box" id="explanationBox">
+          <p>Press ▶ to start stepping through the moves, or click any move in the list.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Pass opening data to JavaScript -->
+<script>
+  const OPENING_DATA = {{ opening | tojson }};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/board.js"></script>
+{% endblock %}
