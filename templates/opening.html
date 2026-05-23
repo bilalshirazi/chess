@@ -5,12 +5,10 @@
 {% block content %}
 <div class="opening-page">
 
-  <!-- Breadcrumb -->
   <nav class="breadcrumb">
     <a href="{{ base }}/">All Openings</a> <span>›</span> <span>{{ opening.name }}</span>
   </nav>
 
-  <!-- Opening Header -->
   <div class="opening-header">
     <div class="opening-title-row">
       <span class="opening-emoji">{{ opening.emoji }}</span>
@@ -22,7 +20,6 @@
     <p class="opening-tagline">{{ opening.tagline }}</p>
   </div>
 
-  <!-- Overview -->
   <section class="overview-section">
     <h2>Overview</h2>
     <p class="overview-text">{{ opening.overview }}</p>
@@ -36,11 +33,9 @@
     </div>
   </section>
 
-  <!-- Board + Moves section -->
   <section class="board-section">
     <h2>Explore the Moves</h2>
 
-    <!-- Variation Tabs -->
     <div class="variation-tabs" id="variationTabs">
       {% for line in opening.lines %}
       <button class="tab-btn {% if loop.first %}active{% endif %}"
@@ -51,16 +46,33 @@
     </div>
 
     <div class="board-layout">
-      <!-- Chess board -->
-      <div class="board-container">
-        <div id="chessboard"></div>
-        <div class="board-controls">
-          <button id="btnStart" title="Go to start">⏮</button>
-          <button id="btnPrev" title="Previous move">◀</button>
-          <button id="btnNext" title="Next move">▶</button>
-          <button id="btnEnd" title="Go to end">⏭</button>
+
+      <!-- ── Dual boards ── -->
+      <div class="boards-dual">
+
+        <!-- 2D board -->
+        <div class="board-panel">
+          <div class="board-panel-label">2D — Top Down</div>
+          <div id="chessboard"></div>
+          <div class="board-controls">
+            <button id="btnStart" title="Go to start">⏮</button>
+            <button id="btnPrev"  title="Previous move">◀</button>
+            <button id="btnNext"  title="Next move">▶</button>
+            <button id="btnEnd"   title="Go to end">⏭</button>
+            <button id="btnFlip"  title="Flip board" class="btn-flip">⬆ Black</button>
+          </div>
+          <div class="move-counter" id="moveCounter">Start position</div>
         </div>
-        <div class="move-counter" id="moveCounter">Start position</div>
+
+        <!-- 3D board -->
+        <div class="board-panel">
+          <div class="board-panel-label">3D — Drag to rotate · Scroll to zoom</div>
+          <div id="chessboard3d" class="board-3d-wrap"></div>
+          <div class="board-controls">
+            <button id="btnReset3d" title="Reset camera angle">↺ Reset view</button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Move list + explanation -->
@@ -70,17 +82,18 @@
           <p>Press ▶ to start stepping through the moves, or click any move in the list.</p>
         </div>
       </div>
+
     </div>
   </section>
 
 </div>
 
-<!-- Pass opening data to JavaScript -->
 <script>
   const OPENING_DATA = {{ opening | tojson }};
 </script>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ base }}/static/js/board3d.js"></script>
 <script src="{{ base }}/static/js/board.js"></script>
 {% endblock %}

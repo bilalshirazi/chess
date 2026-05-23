@@ -4,17 +4,18 @@
   const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
   let board = null;
+  let board3d = null;
+  let flipped = false;
   let currentLineIndex = 0;
-  let currentStepIndex = -1; // -1 = start position (before any moves)
+  let currentStepIndex = -1; // -1 = start position
 
   // ---------- helpers ----------
 
-  function currentLine() {
-    return OPENING_DATA.lines[currentLineIndex];
-  }
+  function currentLine()  { return OPENING_DATA.lines[currentLineIndex]; }
+  function currentSteps() { return currentLine().steps; }
 
-  function currentSteps() {
-    return currentLine().steps;
+  function currentFen() {
+    return currentStepIndex < 0 ? START_FEN : currentSteps()[currentStepIndex].fen;
   }
 
   // ---------- board init ----------
@@ -22,9 +23,10 @@
   function initBoard(fen) {
     if (board) board.destroy();
     board = Chessboard('chessboard', {
-      position: fen || START_FEN,
+      position:   fen || START_FEN,
       pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
-      draggable: false,
+      draggable:  false,
+      orientation: flipped ? 'black' : 'white',
     });
   }
 
@@ -34,28 +36,20 @@
     const list = document.getElementById('moveList');
     list.innerHTML = '';
     const steps = currentSteps();
-
     steps.forEach(function (step, idx) {
-      // Insert move number chip before White's move
-      // Detect White move = the step before this one was Black (odd index) OR this is index 0
-      // Simpler: parse move number from SAN
-      const san = step.san || '';
+      const san   = step.san || '';
       const match = san.match(/^(\d+)\./);
       if (match) {
         const numChip = document.createElement('span');
-        numChip.className = 'move-chip move-number';
+        numChip.className   = 'move-chip move-number';
         numChip.textContent = match[1] + '.';
         list.appendChild(numChip);
       }
-
       const chip = document.createElement('span');
-      chip.className = 'move-chip' + (idx === currentStepIndex ? ' active' : '');
-      // Show just the piece/square part (strip move number from SAN)
+      chip.className   = 'move-chip' + (idx === currentStepIndex ? ' active' : '');
       chip.textContent = san.replace(/^\d+\.\.\.\s*/, '').replace(/^\d+\.\s*/, '');
       chip.dataset.idx = idx;
-      chip.addEventListener('click', function () {
-        goToStep(idx);
-      });
+      chip.addEventListener('click', function () { goToStep(idx); });
       list.appendChild(chip);
     });
   }
@@ -67,14 +61,14 @@
       return;
     }
     const step = currentSteps()[currentStepIndex];
-    const san = step.san || step.move;
+    const san  = step.san || step.move;
     box.innerHTML =
       '<strong style="color:var(--accent-2,#e8c97a);font-size:1.05rem;">' + san + '</strong>' +
       '<p style="margin-top:0.5rem;">' + step.explanation + '</p>';
   }
 
   function renderCounter() {
-    const el = document.getElementById('moveCounter');
+    const el    = document.getElementById('moveCounter');
     const steps = currentSteps();
     if (currentStepIndex < 0) {
       el.textContent = 'Start position · ' + steps.length + ' moves in this line';
@@ -84,10 +78,9 @@
   }
 
   function renderAll() {
-    const fen = currentStepIndex < 0
-      ? START_FEN
-      : currentSteps()[currentStepIndex].fen;
+    const fen = currentFen();
     board.position(fen, true);
+    if (board3d) board3d.setPosition(fen);
     renderMoveList();
     renderExplanation();
     renderCounter();
@@ -97,8 +90,8 @@
 
   function goToStep(idx) {
     const steps = currentSteps();
-    if (idx < 0) idx = -1;
-    if (idx >= steps.length) idx = steps.length - 1;
+    if (idx < 0)               idx = -1;
+    if (idx >= steps.length)   idx = steps.length - 1;
     currentStepIndex = idx;
     renderAll();
   }
@@ -113,17 +106,22 @@
   function switchLine(lineIdx) {
     currentLineIndex = lineIdx;
     currentStepIndex = -1;
-
-    // Update tab styles
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
       btn.classList.toggle('active', parseInt(btn.dataset.lineIndex) === lineIdx);
     });
-
     initBoard(START_FEN);
     renderAll();
   }
 
-  // ---------- keyboard support ----------
+  // ---------- flip ----------
+
+  function flipBoard() {
+    flipped = !flipped;
+    initBoard(currentFen());
+    document.getElementById('btnFlip').textContent = flipped ? '⬆ White' : '⬆ Black';
+  }
+
+  // ---------- keyboard ----------
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToNext();
@@ -136,12 +134,25 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initBoard(START_FEN);
+
+    // 3D board — only if Three.js loaded
+    if (window.Chess3DBoard) {
+      board3d = new Chess3DBoard('chessboard3d');
+      board3d.setPosition(START_FEN);
+    }
+
     renderAll();
 
     document.getElementById('btnStart').addEventListener('click', goToStart);
     document.getElementById('btnPrev').addEventListener('click', goToPrev);
     document.getElementById('btnNext').addEventListener('click', goToNext);
     document.getElementById('btnEnd').addEventListener('click', goToEnd);
+    document.getElementById('btnFlip').addEventListener('click', flipBoard);
+
+    const resetBtn = document.getElementById('btnReset3d');
+    if (resetBtn && board3d) {
+      resetBtn.addEventListener('click', function () { board3d._resetCamera(); });
+    }
 
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
