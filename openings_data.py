@@ -198,7 +198,6 @@ OPENINGS = {
             },
         ],
     },
-
     "dutch-defense": {
         "id": "dutch-defense",
         "name": "The Dutch Defense",
@@ -356,7 +355,6 @@ OPENINGS = {
             },
         ],
     },
-
     "rousseau-gambit": {
         "id": "rousseau-gambit",
         "name": "The Rousseau Gambit",
@@ -514,7 +512,6 @@ OPENINGS = {
             },
         ],
     },
-
     "scotch-gambit": {
         "id": "scotch-gambit",
         "name": "The Scotch Gambit",
