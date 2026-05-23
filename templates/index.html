@@ -16,7 +16,7 @@
   <h2 class="section-title">Choose an Opening</h2>
   <div class="openings-grid">
     {% for opening in openings %}
-    <a href="/opening/{{ opening.id }}" class="opening-card">
+    <a href="{{ base }}/opening/{{ opening.id }}" class="opening-card">
       <div class="card-emoji">{{ opening.emoji }}</div>
       <div class="card-body">
         <h3>{{ opening.name }}</h3>

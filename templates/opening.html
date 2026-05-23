@@ -7,7 +7,7 @@
 
   <!-- Breadcrumb -->
   <nav class="breadcrumb">
-    <a href="/">All Openings</a> <span>›</span> <span>{{ opening.name }}</span>
+    <a href="{{ base }}/">All Openings</a> <span>›</span> <span>{{ opening.name }}</span>
   </nav>
 
   <!-- Opening Header -->
@@ -82,5 +82,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/board.js"></script>
+<script src="{{ base }}/static/js/board.js"></script>
 {% endblock %}

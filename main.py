@@ -9,11 +9,15 @@ app = FastAPI(title="Chess Openings Academy")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+BASE = ""  # empty for local dev; static build uses /chess
+
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     openings = list(OPENINGS.values())
-    return templates.TemplateResponse("index.html", {"request": request, "openings": openings})
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "openings": openings, "base": BASE}
+    )
 
 
 @app.get("/opening/{opening_id}", response_class=HTMLResponse)
@@ -21,7 +25,9 @@ async def opening(request: Request, opening_id: str):
     opening = OPENINGS.get(opening_id)
     if not opening:
         return HTMLResponse("<h1>Opening not found</h1>", status_code=404)
-    return templates.TemplateResponse("opening.html", {"request": request, "opening": opening})
+    return templates.TemplateResponse(
+        "opening.html", {"request": request, "opening": opening, "base": BASE}
+    )
 
 
 @app.get("/api/opening/{opening_id}")
