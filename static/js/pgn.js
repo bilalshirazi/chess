@@ -80,13 +80,17 @@
     c.width   = c.height = 80;
     const ctx = c.getContext('2d');
     const isW = piece[0] === 'w';
-    ctx.font = 'bold 58px serif';
+    ctx.font = 'bold 52px serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = isW ? '#3a3a3a' : '#c0c0c0';
-    ctx.strokeText(PIECE_UNICODE[piece], 40, 43);
-    ctx.fillStyle = isW ? '#f5f5f0' : '#1a1a1a';
-    ctx.fillText(PIECE_UNICODE[piece], 40, 43);
+    ctx.shadowColor   = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur    = 3;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 1;
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = isW ? '#1a1a1a' : '#d0d0d0';
+    ctx.strokeText(PIECE_UNICODE[piece], 40, 42);
+    ctx.fillStyle = isW ? '#ffffff' : '#111111';
+    ctx.fillText(PIECE_UNICODE[piece], 40, 42);
     return c.toDataURL();
   }
 
