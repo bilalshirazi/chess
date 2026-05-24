@@ -10,7 +10,7 @@ OPENINGS = {
         "name": "The Colle System",
         "emoji": "♙",
         "color": "White",
-        "tagline": "A solid, reliable opening for White built around d4",
+        "tagline": "A solid, reliable White system built around d4 + e3",
         "overview": "The Colle System is a quiet but deadly opening for White. White builds a rock-solid "
         "pawn centre with d4 and e3, develops the knight to f3, and often launches a powerful "
         "kingside attack once castled. It is perfect for beginners because the piece development "
@@ -423,93 +423,216 @@ OPENINGS = {
                     },
                 ],
             },
+        ],
+    },
+    "london-system": {
+        "id": "london-system",
+        "name": "The London System",
+        "emoji": "🏰",
+        "color": "White",
+        "tagline": "A beginner-friendly setup with Bf4 and a solid pawn chain",
+        "overview": "The London System is one of the easiest ways to reach a playable position as White. "
+        "White starts with d4, develops the bishop to f4 before locking it in, and builds a sturdy "
+        "centre with e3 and c3. Because White's plan is more about setup than memorising theory, "
+        "it is a popular choice for improving players. The London can also become aggressive when "
+        "White strikes with e4 or attacks on the kingside.",
+        "key_ideas": [
+            "Play d4 and develop the bishop to f4 early",
+            "Support the centre with e3 and c3",
+            "Develop knights to f3 and d2, then castle",
+            "Use the bishop on f4 to pressure e5 and support an e4 break",
+            "Stay flexible: the same setup works against many Black defenses",
+        ],
+        "lines": [
             {
-                "id": "barry-attack",
-                "name": "Barry Attack",
+                "id": "main",
+                "name": "Main Line (vs ...d5)",
                 "steps": [
                     {
                         "move": "d4",
                         "san": "1. d4",
                         "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-                        "explanation": "1.d4 — White opens.",
+                        "explanation": "White claims space in the centre with 1.d4.",
+                    },
+                    {
+                        "move": "d5",
+                        "san": "1... d5",
+                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+                        "explanation": "Black meets the challenge by taking space in the centre too.",
+                    },
+                    {
+                        "move": "Nf3",
+                        "san": "2. Nf3",
+                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
+                        "explanation": "Develop and prepare to castle. The knight also eyes e5 and d4.",
+                    },
+                    {
+                        "move": "Nf6",
+                        "san": "2... Nf6",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
+                        "explanation": "Black develops and increases control of the centre.",
+                    },
+                    {
+                        "move": "Bf4",
+                        "san": "3. Bf4",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 3 3",
+                        "explanation": "The London bishop. White develops it outside the pawn chain.",
+                    },
+                    {
+                        "move": "e6",
+                        "san": "3... e6",
+                        "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 0 4",
+                        "explanation": "A solid reply: Black supports d5 and prepares to develop smoothly.",
+                    },
+                    {
+                        "move": "e3",
+                        "san": "4. e3",
+                        "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+                        "explanation": "White builds a sturdy pawn chain and opens lines for development.",
+                    },
+                    {
+                        "move": "c5",
+                        "san": "4... c5",
+                        "fen": "rnbqkb1r/pp3ppp/4pn2/2pp4/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 0 5",
+                        "explanation": "Black challenges the centre from the side, a common plan against London setups.",
+                    },
+                    {
+                        "move": "c3",
+                        "san": "5. c3",
+                        "fen": "rnbqkb1r/pp3ppp/4pn2/2pp4/3P1B2/2P1PN2/PP3PPP/RN1QKB1R b KQkq - 0 5",
+                        "explanation": "Reinforce d4 and prepare a later e4 push.",
+                    },
+                    {
+                        "move": "Nc6",
+                        "san": "5... Nc6",
+                        "fen": "r1bqkb1r/pp3ppp/2n1pn2/2pp4/3P1B2/2P1PN2/PP3PPP/RN1QKB1R w KQkq - 1 6",
+                        "explanation": "Black develops and adds more pressure to the centre.",
+                    },
+                    {
+                        "move": "Nbd2",
+                        "san": "6. Nbd2",
+                        "fen": "r1bqkb1r/pp3ppp/2n1pn2/2pp4/3P1B2/2P1PN2/PP1N1PPP/R2QKB1R b KQkq - 2 6",
+                        "explanation": "The knight supports e4 and keeps the position flexible.",
+                    },
+                    {
+                        "move": "Bd6",
+                        "san": "6... Bd6",
+                        "fen": "r1bqk2r/pp3ppp/2nbpn2/2pp4/3P1B2/2P1PN2/PP1N1PPP/R2QKB1R w KQkq - 3 7",
+                        "explanation": "Black challenges the bishop on f4 and develops with tempo.",
+                    },
+                    {
+                        "move": "Bg3",
+                        "san": "7. Bg3",
+                        "fen": "r1bqk2r/pp3ppp/2nbpn2/2pp4/3P4/2P1PNB1/PP1N1PPP/R2QKB1R b KQkq - 4 7",
+                        "explanation": "Retreat and keep the bishop pair. White is ready to castle.",
+                    },
+                    {
+                        "move": "O-O",
+                        "san": "7... O-O",
+                        "fen": "r1bq1rk1/pp3ppp/2nbpn2/2pp4/3P4/2P1PNB1/PP1N1PPP/R2QKB1R w KQ - 5 8",
+                        "explanation": "Black castles and finishes development.",
+                    },
+                    {
+                        "move": "Bd3",
+                        "san": "8. Bd3",
+                        "fen": "r1bq1rk1/pp3ppp/2nbpn2/2pp4/3P4/2PBPNB1/PP1N1PPP/R2QK2R b KQ - 6 8",
+                        "explanation": "Develop and support an eventual e4 break in the centre.",
+                    },
+                    {
+                        "move": "b6",
+                        "san": "8... b6",
+                        "fen": "r1bq1rk1/p4ppp/1pnbpn2/2pp4/3P4/2PBPNB1/PP1N1PPP/R2QK2R w KQ - 0 9",
+                        "explanation": "Black prepares to develop the bishop to b7, pressuring the centre from afar.",
+                    },
+                ],
+            },
+            {
+                "id": "vs-kings-indian",
+                "name": "Vs King's Indian Setup (...g6)",
+                "steps": [
+                    {
+                        "move": "d4",
+                        "san": "1. d4",
+                        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+                        "explanation": "White starts with d4, aiming for a solid setup.",
                     },
                     {
                         "move": "Nf6",
                         "san": "1... Nf6",
                         "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
-                        "explanation": "1...Nf6 — Black plays the knight.",
+                        "explanation": "Black develops and keeps options open.",
                     },
                     {
                         "move": "Nf3",
                         "san": "2. Nf3",
                         "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 2 2",
-                        "explanation": "2.Nf3 — White develops.",
+                        "explanation": "Develop and prepare to castle.",
                     },
                     {
                         "move": "g6",
                         "san": "2... g6",
                         "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3",
-                        "explanation": "2...g6 — Black goes for a King's Indian or Grünfeld setup.",
-                    },
-                    {
-                        "move": "Nc3",
-                        "san": "3. Nc3",
-                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/2N2N2/PPP1PPPP/R1BQKB1R b KQkq - 1 3",
-                        "explanation": "3.Nc3! — The Barry Attack. Instead of e3, White brings out the "
-                        "queen's knight immediately, aiming for a fast Bf4 setup that "
-                        "sidesteps lots of theory.",
-                    },
-                    {
-                        "move": "d5",
-                        "san": "3... d5",
-                        "fen": "rnbqkb1r/ppp1pp1p/5np1/3p4/3P4/2N2N2/PPP1PPPP/R1BQKB1R w KQkq - 0 4",
-                        "explanation": "3...d5 — Black strikes at the centre — the Grünfeld approach.",
+                        "explanation": "Black heads for a King's Indian fianchetto.",
                     },
                     {
                         "move": "Bf4",
-                        "san": "4. Bf4",
-                        "fen": "rnbqkb1r/ppp1pp1p/5np1/3p4/3P1B2/2N2N2/PPP1PPPP/R2QKB1R b KQkq - 1 4",
-                        "explanation": "4.Bf4! — The key Barry Attack move. The bishop develops "
-                        "actively to f4, controlling the e5 square and putting pressure "
-                        "on the position from the outset.",
+                        "san": "3. Bf4",
+                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 1 3",
+                        "explanation": "White sticks to London principles: develop the bishop early.",
                     },
                     {
                         "move": "Bg7",
-                        "san": "4... Bg7",
-                        "fen": "rnbqk2r/ppp1ppbp/5np1/3p4/3P1B2/2N2N2/PPP1PPPP/R2QKB1R w KQkq - 2 5",
-                        "explanation": "4...Bg7 — Black completes the fianchetto.",
+                        "san": "3... Bg7",
+                        "fen": "rnbqk2r/ppppppbp/5np1/8/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 2 4",
+                        "explanation": "Black completes the fianchetto, putting pressure on the centre.",
                     },
                     {
                         "move": "e3",
-                        "san": "5. e3",
-                        "fen": "rnbqk2r/ppp1ppbp/5np1/3p4/3P1B2/2N1PN2/PPP2PPP/R2QKB1R b KQkq - 0 5",
-                        "explanation": "5.e3 — White reinforces the centre.",
+                        "san": "4. e3",
+                        "fen": "rnbqk2r/ppppppbp/5np1/8/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+                        "explanation": "A calm move that supports d4 and opens lines for development.",
                     },
                     {
                         "move": "O-O",
-                        "san": "5... O-O",
-                        "fen": "rnbq1rk1/ppp1ppbp/5np1/3p4/3P1B2/2N1PN2/PPP2PPP/R2QKB1R w KQ - 1 6",
-                        "explanation": "5...O-O — Black castles.",
+                        "san": "4... O-O",
+                        "fen": "rnbq1rk1/ppppppbp/5np1/8/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQ - 1 5",
+                        "explanation": "Black castles, putting the king to safety.",
+                    },
+                    {
+                        "move": "h3",
+                        "san": "5. h3",
+                        "fen": "rnbq1rk1/ppppppbp/5np1/8/3P1B2/4PN1P/PPP2PP1/RN1QKB1R b KQ - 0 5",
+                        "explanation": "A useful waiting move: it stops ...Ng4 ideas and keeps White flexible.",
+                    },
+                    {
+                        "move": "d6",
+                        "san": "5... d6",
+                        "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/3P1B2/4PN1P/PPP2PP1/RN1QKB1R w KQ - 0 6",
+                        "explanation": "Black supports a future ...e5 central break.",
                     },
                     {
                         "move": "Be2",
                         "san": "6. Be2",
-                        "fen": "rnbq1rk1/ppp1ppbp/5np1/3p4/3P1B2/2N1PN2/PPP1BPPP/R2QK2R b KQ - 2 6",
-                        "explanation": "6.Be2 — White prepares to castle.",
+                        "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1QK2R b KQ - 1 6",
+                        "explanation": "White prepares to castle and keeps the position solid.",
                     },
                     {
-                        "move": "c6",
-                        "san": "6... c6",
-                        "fen": "rnbq1rk1/pp2ppbp/2p2np1/3p4/3P1B2/2N1PN2/PPP1BPPP/R2QK2R w KQ - 0 7",
-                        "explanation": "6...c6 — Black supports d5 and prepares queenside expansion.",
+                        "move": "Nbd7",
+                        "san": "6... Nbd7",
+                        "fen": "r1bq1rk1/pppnppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1QK2R w KQ - 2 7",
+                        "explanation": "Black develops and supports the e5 push.",
                     },
                     {
                         "move": "O-O",
                         "san": "7. O-O",
-                        "fen": "rnbq1rk1/pp2ppbp/2p2np1/3p4/3P1B2/2N1PN2/PPP1BPPP/R2Q1RK1 b - - 1 7",
-                        "explanation": "7.O-O — White castles. The Barry Attack gives White a solid, "
-                        "well-coordinated position. The knight on c3 and bishop on f4 "
-                        "work harmoniously, and Ne5 is a strong follow-up plan.",
+                        "fen": "r1bq1rk1/pppnppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1Q1RK1 b - - 3 7",
+                        "explanation": "White castles too. The London aims for this safe, developed setup.",
+                    },
+                    {
+                        "move": "e5",
+                        "san": "7... e5",
+                        "fen": "r1bq1rk1/pppn1pbp/3p1np1/4p3/3P1B2/4PN1P/PPP1BPP1/RN1Q1RK1 w - - 0 8",
+                        "explanation": "Black grabs space in the centre. White can respond with calm development or a timely e4 break later.",
                     },
                 ],
             },
