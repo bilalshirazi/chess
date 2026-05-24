@@ -143,9 +143,9 @@
       key.shadow.camera.top        =  8;
       key.shadow.camera.bottom     = -8;
       this.scene.add(key);
-      this.scene.add(Object.assign(new THREE.DirectionalLight(0xcce8ff, 0.35), {
-        position: new THREE.Vector3(-4, 6, -4)
-      }));
+      const fill = new THREE.DirectionalLight(0xcce8ff, 0.35);
+      fill.position.set(-4, 6, -4);
+      this.scene.add(fill);
     }
 
     // ── orbit controls ────────────────────────────────────────────
