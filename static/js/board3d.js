@@ -77,8 +77,8 @@
       border.receiveShadow = true;
       this.boardGroup.add(border);
 
-      const lightMat = new THREE.MeshLambertMaterial({ color: this._srgbColor(this.squareTheme.light) });
-      const darkMat  = new THREE.MeshLambertMaterial({ color: this._srgbColor(this.squareTheme.dark) });
+      const lightMat = new THREE.MeshBasicMaterial({ color: this.squareTheme.light });
+      const darkMat  = new THREE.MeshBasicMaterial({ color: this.squareTheme.dark });
 
       // 64 squares
       for (let r = 0; r < 8; r++) {
@@ -109,18 +109,14 @@
         : ['8','7','6','5','4','3','2','1'];
 
       for (let i = 0; i < 8; i++) {
-        // Keep labels visible on the viewer's near/left edges even after flip().
-        // Since the entire boardGroup rotates, we place labels on opposite edges when flipped.
-        const nearZ = this.flipped ? -4.65 : 4.65;
-        const leftX = this.flipped ? 4.65 : -4.65;
-
-        // File labels along the near edge
-        const fs = this._labelSprite(FILES[i], i - 3.5, nearZ);
-        // Rank labels along the left edge
-        const rs = this._labelSprite(RANKS[i], leftX, i - 3.5);
-        this.boardGroup.add(fs);
-        this.boardGroup.add(rs);
-        this._labelSprites.push(fs, rs);
+        // File labels on near and far edges (top and bottom of board)
+        const fNear = this._labelSprite(FILES[i], i - 3.5,  4.65);
+        const fFar  = this._labelSprite(FILES[i], i - 3.5, -4.65);
+        // Rank labels on left and right edges
+        const rLeft  = this._labelSprite(RANKS[i], -4.65, i - 3.5);
+        const rRight = this._labelSprite(RANKS[i],  4.65, i - 3.5);
+        this.boardGroup.add(fNear, fFar, rLeft, rRight);
+        this._labelSprites.push(fNear, fFar, rLeft, rRight);
       }
     }
 
@@ -284,7 +280,19 @@
               // rankIdx 0 = rank 8 (black back rank) → z=-3.5 (far, top of screen)
               // rankIdx 7 = rank 1 (white back rank) → z=+3.5 (near, bottom = white side)
               piece.position.z = rankIdx - 3.5;
-              piece.traverse(o => { if (o.isMesh) o.castShadow = true; });
+              piece.traverse(o => {
+                if (o.isMesh) {
+                  o.castShadow = true;
+                  if (isWhite) {
+                    const outline = new THREE.Mesh(
+                      o.geometry,
+                      new THREE.MeshBasicMaterial({ color: 0x2a1800, side: THREE.BackSide })
+                    );
+                    outline.scale.setScalar(1.07);
+                    o.add(outline);
+                  }
+                }
+              });
               this.boardGroup.add(piece);
               this.pieceMeshes.push(piece);
             }

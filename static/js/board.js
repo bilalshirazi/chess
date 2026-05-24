@@ -132,6 +132,37 @@
       draggable:   false,
       orientation: flipped ? 'black' : 'white',
     });
+    setTimeout(addExtraNotation, 50);
+  }
+
+  function addExtraNotation() {
+    const boardEl = document.getElementById('chessboard');
+    if (!boardEl) return;
+    boardEl.querySelectorAll('.sq-xnote').forEach(function (el) { el.remove(); });
+    const files = flipped ? 'hgfedcba'.split('') : 'abcdefgh'.split('');
+    const ranks = flipped ? ['1','2','3','4','5','6','7','8'] : ['8','7','6','5','4','3','2','1'];
+    // File labels on top and bottom rows
+    for (let f = 0; f < 8; f++) {
+      [ranks[0], ranks[7]].forEach(function (rank) {
+        const sq = boardEl.querySelector('[data-square="' + files[f] + rank + '"]');
+        if (!sq) return;
+        const el = document.createElement('span');
+        el.className = 'sq-xnote sq-xnote-file';
+        el.textContent = files[f];
+        sq.appendChild(el);
+      });
+    }
+    // Rank labels on left and right columns
+    for (let r = 0; r < 8; r++) {
+      [files[0], files[7]].forEach(function (file) {
+        const sq = boardEl.querySelector('[data-square="' + file + ranks[r] + '"]');
+        if (!sq) return;
+        const el = document.createElement('span');
+        el.className = 'sq-xnote sq-xnote-rank';
+        el.textContent = ranks[r];
+        sq.appendChild(el);
+      });
+    }
   }
 
   // ---------- render ----------
@@ -223,6 +254,7 @@
     document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
     const { from, to } = getMoveInfo(currentStepIndex);
     setTimeout(function () { applyHighlights2D(from, to); }, 80);
+    setTimeout(addExtraNotation, 50);
   }
 
   // ---------- highlights toggle ----------
@@ -297,5 +329,6 @@
     });
     initBoard(START_FEN);
     renderAll();
+    setTimeout(addExtraNotation, 50);
   }
 })();
