@@ -76,22 +76,44 @@
     bP:'♟', bR:'♜', bN:'♞', bB:'♝', bQ:'♛', bK:'♚',
   };
   function pieceDataURL(piece) {
-    const c   = document.createElement('canvas');
-    c.width   = c.height = 80;
-    const ctx = c.getContext('2d');
-    const isW = piece[0] === 'w';
-    ctx.font = 'bold 52px serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 80;
+    const ctx = canvas.getContext('2d');
+    const isWhite = piece[0] === 'w';
+
+    const glyph = PIECE_UNICODE[piece] + '\uFE0E'; // force text presentation when available
+    const fontFamily =
+      '"Apple Symbols","Segoe UI Symbol","Noto Sans Symbols2","Noto Sans Symbols",' +
+      '"DejaVu Sans","Arial Unicode MS",serif';
+    const baseFontSize = 56;
+    const padding = 10;
+    const targetBox = 80 - padding * 2;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.font = '600 ' + baseFontSize + 'px ' + fontFamily;
+    const metrics = ctx.measureText(glyph);
+    const measuredWidth = (metrics.actualBoundingBoxLeft != null && metrics.actualBoundingBoxRight != null)
+      ? (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight)
+      : metrics.width;
+    const measuredHeight = (metrics.actualBoundingBoxAscent != null && metrics.actualBoundingBoxDescent != null)
+      ? (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+      : baseFontSize;
+    const scale = Math.min(targetBox / measuredWidth, targetBox / measuredHeight, 1);
+    const fontSize = Math.max(1, Math.floor(baseFontSize * scale));
+    ctx.font = '600 ' + fontSize + 'px ' + fontFamily;
+
     ctx.shadowColor   = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur    = 3;
+    ctx.shadowBlur    = Math.max(2, Math.round(fontSize / 18));
     ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 1;
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = isW ? '#1a1a1a' : '#d0d0d0';
-    ctx.strokeText(PIECE_UNICODE[piece], 40, 42);
-    ctx.fillStyle = isW ? '#ffffff' : '#111111';
-    ctx.fillText(PIECE_UNICODE[piece], 40, 42);
-    return c.toDataURL();
+    ctx.shadowOffsetY = Math.max(1, Math.round(fontSize / 56));
+    ctx.lineWidth = Math.max(3, Math.round(fontSize / 14));
+    ctx.strokeStyle = isWhite ? '#1a1a1a' : '#d0d0d0';
+    ctx.strokeText(glyph, 40, 42);
+    ctx.fillStyle = isWhite ? '#ffffff' : '#111111';
+    ctx.fillText(glyph, 40, 42);
+    return canvas.toDataURL('image/png');
   }
 
   // ── render ─────────────────────────────────────────────────────
