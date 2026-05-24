@@ -10,6 +10,9 @@
     q: 'ChessPieceQueen',  k: 'ChessPieceKing',
   };
 
+  // Respects the GitHub Pages sub-path (e.g. /chess/static/models/)
+  const MODELS_BASE = (window.STATIC_BASE || '/static') + '/models/';
+
   // Scale all pieces so the tallest fits in TARGET_HEIGHT board units
   const TARGET_HEIGHT = 0.82;
 
@@ -147,7 +150,7 @@
       let remaining = types.length;
 
       types.forEach(type => {
-        const url = `/static/models/${FILE_MAP[type]}.glb`;
+        const url = `${MODELS_BASE}${FILE_MAP[type]}.glb`;
         loader.load(
           url,
           (gltf) => {

@@ -38,6 +38,8 @@
     </p>
   </footer>
 
+  <!-- Expose base path so JS can build correct asset URLs -->
+  <script>window.STATIC_BASE = "{{ base }}/static";</script>
   <!-- All scripts vendored (no external CDN required) -->
   <script src="{{ base }}/static/js/vendor/jquery.min.js"></script>
   <script src="{{ base }}/static/js/vendor/chessboard.min.js"></script>
