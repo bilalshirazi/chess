@@ -77,7 +77,8 @@
   };
   function pieceDataURL(piece) {
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 80;
+    const canvasSize = 96;
+    canvas.width = canvas.height = canvasSize;
     const ctx = canvas.getContext('2d');
     const isWhite = piece[0] === 'w';
 
@@ -85,12 +86,13 @@
     const fontFamily =
       '"Apple Symbols","Segoe UI Symbol","Noto Sans Symbols2","Noto Sans Symbols",' +
       '"DejaVu Sans","Arial Unicode MS",serif';
-    const baseFontSize = 56;
-    const padding = 10;
-    const targetBox = 80 - padding * 2;
+    const baseFontSize = 68;
+    // Leave extra headroom so stroke + shadow never get clipped by the canvas bounds.
+    const padding = 18;
+    const targetBox = canvasSize - padding * 2;
 
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
 
     ctx.font = '600 ' + baseFontSize + 'px ' + fontFamily;
     const metrics = ctx.measureText(glyph);
@@ -106,15 +108,35 @@
     const fontSize = Math.max(1, Math.floor(baseFontSize * scale));
     ctx.font = '600 ' + fontSize + 'px ' + fontFamily;
 
+    ctx.lineJoin      = 'round';
+    ctx.lineCap       = 'round';
     ctx.shadowColor   = 'rgba(0,0,0,0.55)';
     ctx.shadowBlur    = Math.max(2, Math.round(fontSize / 18));
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = Math.max(1, Math.round(fontSize / 56));
     ctx.lineWidth = Math.max(3, Math.round(fontSize / 14));
     ctx.strokeStyle = isWhite ? '#1a1a1a' : '#d0d0d0';
-    ctx.strokeText(glyph, 40, 42);
+    const finalMetrics = ctx.measureText(glyph);
+    const hasBoxes =
+      finalMetrics.actualBoundingBoxLeft != null &&
+      finalMetrics.actualBoundingBoxRight != null &&
+      finalMetrics.actualBoundingBoxAscent != null &&
+      finalMetrics.actualBoundingBoxDescent != null;
+    const width = hasBoxes
+      ? (finalMetrics.actualBoundingBoxLeft + finalMetrics.actualBoundingBoxRight)
+      : targetBox;
+    const height = hasBoxes
+      ? (finalMetrics.actualBoundingBoxAscent + finalMetrics.actualBoundingBoxDescent)
+      : targetBox;
+    const x = hasBoxes ? ((canvasSize - width) / 2 + finalMetrics.actualBoundingBoxLeft) : (canvasSize / 2);
+    const y = hasBoxes ? ((canvasSize - height) / 2 + finalMetrics.actualBoundingBoxAscent) : (canvasSize / 2);
+    if (!hasBoxes) {
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+    }
+    ctx.strokeText(glyph, x, y);
     ctx.fillStyle = isWhite ? '#ffffff' : '#111111';
-    ctx.fillText(glyph, 40, 42);
+    ctx.fillText(glyph, x, y);
     return canvas.toDataURL('image/png');
   }
 
