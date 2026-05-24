@@ -335,6 +335,8 @@ main { flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; padding: 2rem 1.
 .btn-flip       { font-size: 0.8rem; padding: 0.45rem 0.7rem; }
 .btn-highlight  { font-size: 0.8rem; padding: 0.45rem 0.7rem; color: var(--text-muted); }
 .btn-highlight.active { color: var(--accent); border-color: var(--accent); }
+.btn-sound      { font-size: 0.8rem; padding: 0.45rem 0.7rem; color: var(--text-muted); }
+.btn-sound.active { color: var(--accent); border-color: var(--accent); }
 
 /* ── Move highlight overlays (injected into chessboard.js square divs) ── */
 .sq-hl {

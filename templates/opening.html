@@ -20,19 +20,6 @@
     <p class="opening-tagline">{{ opening.tagline }}</p>
   </div>
 
-  <section class="overview-section">
-    <h2>Overview</h2>
-    <p class="overview-text">{{ opening.overview }}</p>
-    <div class="key-ideas">
-      <h3>Key Ideas</h3>
-      <ul>
-        {% for idea in opening.key_ideas %}
-        <li>{{ idea }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </section>
-
   <section class="board-section">
     <h2>Explore the Moves</h2>
 
@@ -61,6 +48,7 @@
             <button id="btnEnd"   title="Go to end">⏭</button>
             <button id="btnFlip"  title="Flip board" class="btn-flip">⬆ Black side</button>
             <button id="btnHighlight" title="Toggle move highlights" class="btn-highlight active">◉ Highlights</button>
+            <button id="btnSound" title="Toggle move sounds" class="btn-sound active">🔊 Sound</button>
           </div>
           <div class="move-counter" id="moveCounter">Start position</div>
         </div>
@@ -89,6 +77,19 @@
     </div>
   </section>
 
+  <section class="overview-section">
+    <h2>Overview</h2>
+    <p class="overview-text">{{ opening.overview }}</p>
+    <div class="key-ideas">
+      <h3>Key Ideas</h3>
+      <ul>
+        {% for idea in opening.key_ideas %}
+        <li>{{ idea }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -97,6 +98,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ base }}/static/js/board3d.js?v=4"></script>
-<script src="{{ base }}/static/js/board.js?v=4"></script>
+<script src="{{ base }}/static/js/board3d.js?v=5"></script>
+<script src="{{ base }}/static/js/board.js?v=5"></script>
 {% endblock %}
