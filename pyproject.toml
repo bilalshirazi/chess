@@ -1,7 +1,7 @@
 [project]
 name = "chess-openings-academy"
 version = "0.1.0"
-description = "Interactive chess openings tutorial — Colle, Dutch, Rousseau Gambit, Scotch Gambit"
+description = "Interactive chess openings tutorial — Colle, London, Dutch, Rousseau Gambit, Scotch Gambit"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi==0.115.0",
