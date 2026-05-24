@@ -44,26 +44,25 @@ OPENINGS = {
                         "too. This is Black's most natural reply.",
                     },
                     {
-                        "move": "Nf3",
-                        "san": "2. Nf3",
-                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
-                        "explanation": "The knight comes to f3 — developing a piece, attacking the d5 "
-                        "pawn, and preparing to castle. This is a key Colle move.",
+                        "move": "e3",
+                        "san": "2. e3",
+                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/4P3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+                        "explanation": "The hallmark Colle move — both pawns come first. e3 solidifies "
+                        "the centre and opens the diagonal for the dark-squared bishop.",
                     },
                     {
                         "move": "Nf6",
                         "san": "2... Nf6",
-                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4P3/PPP2PPP/RNBQKBNR w KQkq - 1 3",
                         "explanation": "Black develops naturally. The knight on f6 defends d5 and "
                         "controls the centre.",
                     },
                     {
-                        "move": "e3",
-                        "san": "3. e3",
-                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
-                        "explanation": "This quiet pawn move is the hallmark of the Colle System. It "
-                        "supports d4, opens the diagonal for the bishop on f1, and "
-                        "keeps the position solid.",
+                        "move": "Nf3",
+                        "san": "3. Nf3",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 2 3",
+                        "explanation": "Now the knight develops to f3, attacking d5 and preparing to castle. "
+                        "With both pawns already in place, the Colle setup is underway.",
                     },
                     {
                         "move": "e6",
@@ -143,22 +142,22 @@ OPENINGS = {
                         "explanation": "Black contests the centre.",
                     },
                     {
-                        "move": "Nf3",
-                        "san": "2. Nf3",
-                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
-                        "explanation": "Knight to f3 — developing and pressuring d5.",
+                        "move": "e3",
+                        "san": "2. e3",
+                        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/4P3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+                        "explanation": "Both pawns first — the Colle approach. e3 solidifies the centre.",
                     },
                     {
                         "move": "Nf6",
                         "san": "2... Nf6",
-                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4P3/PPP2PPP/RNBQKBNR w KQkq - 1 3",
                         "explanation": "Black develops symmetrically.",
                     },
                     {
-                        "move": "e3",
-                        "san": "3. e3",
-                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
-                        "explanation": "The Colle move — solid and flexible.",
+                        "move": "Nf3",
+                        "san": "3. Nf3",
+                        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 2 3",
+                        "explanation": "Now the knight — the Colle setup is taking shape.",
                     },
                     {
                         "move": "e6",
@@ -233,22 +232,22 @@ OPENINGS = {
                         "explanation": "Black plays 1...Nf6 — flexible, keeping options open.",
                     },
                     {
-                        "move": "Nf3",
-                        "san": "2. Nf3",
-                        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 2 2",
-                        "explanation": "2.Nf3 — White develops the king's knight.",
+                        "move": "e3",
+                        "san": "2. e3",
+                        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/4P3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+                        "explanation": "2.e3 — both pawns first, the Colle-Zukertort way.",
                     },
                     {
                         "move": "e6",
                         "san": "2... e6",
-                        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3",
+                        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/3P4/4P3/PPP2PPP/RNBQKBNR w KQkq - 0 3",
                         "explanation": "2...e6 — Black prepares d5.",
                     },
                     {
-                        "move": "e3",
-                        "san": "3. e3",
-                        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
-                        "explanation": "3.e3 — the Colle move.",
+                        "move": "Nf3",
+                        "san": "3. Nf3",
+                        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 1 3",
+                        "explanation": "3.Nf3 — the knight joins after the pawns are set.",
                     },
                     {
                         "move": "d5",
@@ -337,23 +336,23 @@ OPENINGS = {
                         "explanation": "1...Nf6 — Black plays the knight first, keeping options open.",
                     },
                     {
-                        "move": "Nf3",
-                        "san": "2. Nf3",
-                        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 2 2",
-                        "explanation": "2.Nf3 — White develops.",
+                        "move": "e3",
+                        "san": "2. e3",
+                        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/4P3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+                        "explanation": "2.e3 — both pawns first, the Colle way.",
                     },
                     {
                         "move": "g6",
                         "san": "2... g6",
-                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3",
+                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/4P3/PPP2PPP/RNBQKBNR w KQkq - 0 3",
                         "explanation": "2...g6 — Black signals the King's Indian: fianchetto the "
                         "bishop on g7 and aim for ...e5.",
                     },
                     {
-                        "move": "e3",
-                        "san": "3. e3",
-                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
-                        "explanation": "3.e3 — White sticks with the Colle System regardless of what "
+                        "move": "Nf3",
+                        "san": "3. Nf3",
+                        "fen": "rnbqkb1r/pppppp1p/5np1/8/3P4/4PN2/PPP2PPP/RNBQKB1R b KQkq - 1 3",
+                        "explanation": "3.Nf3 — White sticks with the Colle System regardless of what "
                         "Black plays.",
                     },
                     {

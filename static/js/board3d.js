@@ -242,19 +242,19 @@
     }
 
     _tuneWhiteMaterials(group) {
-      // Warm/matte white so pieces read clearly on light squares.
-      const warmWhite = this._srgbColor(0xfff6ee);
+      // Bright warm white with strong emissive so pieces are clearly visible on light squares.
+      const warmWhite = this._srgbColor(0xfffbe8);
       group.traverse(o => {
         if (!o.isMesh || !o.material) return;
         const mats = Array.isArray(o.material) ? o.material : [o.material];
         mats.forEach(mat => {
           if (mat && mat.color) mat.color.copy(warmWhite);
-          if (mat && typeof mat.roughness === 'number') mat.roughness = 0.92;
-          if (mat && typeof mat.metalness === 'number') mat.metalness = 0.05;
-          if (mat && mat.specular) mat.specular.setScalar(0.15);
+          if (mat && typeof mat.roughness === 'number') mat.roughness = 0.85;
+          if (mat && typeof mat.metalness === 'number') mat.metalness = 0.0;
+          if (mat && mat.specular) mat.specular.setScalar(0.1);
           if (mat && mat.emissive) {
             mat.emissive.copy(warmWhite);
-            if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 0.08;
+            if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 0.35;
           }
         });
       });
@@ -280,19 +280,7 @@
               // rankIdx 0 = rank 8 (black back rank) → z=-3.5 (far, top of screen)
               // rankIdx 7 = rank 1 (white back rank) → z=+3.5 (near, bottom = white side)
               piece.position.z = rankIdx - 3.5;
-              piece.traverse(o => {
-                if (o.isMesh) {
-                  o.castShadow = true;
-                  if (isWhite) {
-                    const outline = new THREE.Mesh(
-                      o.geometry,
-                      new THREE.MeshBasicMaterial({ color: 0x2a1800, side: THREE.BackSide })
-                    );
-                    outline.scale.setScalar(1.07);
-                    o.add(outline);
-                  }
-                }
-              });
+              piece.traverse(o => { if (o.isMesh) o.castShadow = true; });
               this.boardGroup.add(piece);
               this.pieceMeshes.push(piece);
             }
