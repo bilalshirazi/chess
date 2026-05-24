@@ -245,25 +245,29 @@ main { flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; padding: 2rem 1.
   gap: 1.5rem;
   align-items: flex-start;
   flex-wrap: wrap;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
-/* dual 2D+3D wrapper — 2D fixed, 3D takes remaining space */
+/* dual 2D+3D wrapper */
 .boards-dual {
   display: flex;
   gap: 1.25rem;
   align-items: flex-start;
-  flex-shrink: 0;
   flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
-/* 2D panel: fixed width */
+/* 2D panel: fixed width, never squishes */
 .board-panel-2d { flex-shrink: 0; }
 
-/* 3D panel: grows to fill available space up to a comfortable max */
+/* 3D panel: fills remaining width, max 560px, never smaller than 2D board */
 .board-panel-3d {
   flex: 1 1 var(--board-size);
   min-width: var(--board-size);
-  max-width: 580px;
+  max-width: 560px;
+  min-width: 0;
 }
 
 .board-panel-label {
