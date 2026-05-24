@@ -81,7 +81,9 @@
     const measuredHeight = (metrics.actualBoundingBoxAscent != null && metrics.actualBoundingBoxDescent != null)
       ? (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
       : baseFontSize;
-    const scale = Math.min(targetBox / measuredWidth, targetBox / measuredHeight, 1);
+    const safeWidth = Math.max(measuredWidth, 1);
+    const safeHeight = Math.max(measuredHeight, 1);
+    const scale = Math.min(targetBox / safeWidth, targetBox / safeHeight, 1);
     const fontSize = Math.max(1, Math.floor(baseFontSize * scale));
     ctx.font = '600 ' + fontSize + 'px ' + fontFamily;
 
