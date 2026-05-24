@@ -21,21 +21,21 @@
 
   // ---------- piece theme (canvas-rendered, no external images) ----------
 
-  var PIECE_UNICODE = {
+  const PIECE_UNICODE = {
     wP:'♙', wR:'♖', wN:'♘', wB:'♗', wQ:'♕', wK:'♔',
     bP:'♟', bR:'♜', bN:'♞', bB:'♝', bQ:'♛', bK:'♚',
   };
 
   function pieceDataURL(piece) {
-    var canvas = document.createElement('canvas');
-    canvas.width = 80; canvas.height = 80;
-    var ctx = canvas.getContext('2d');
-    var isWhite = piece[0] === 'w';
-    ctx.font = 'bold 58px serif';
-    ctx.textAlign = 'center';
+    const canvas  = document.createElement('canvas');
+    canvas.width  = 80; canvas.height = 80;
+    const ctx     = canvas.getContext('2d');
+    const isWhite = piece[0] === 'w';
+    ctx.font         = 'bold 58px serif';
+    ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = isWhite ? '#3a3a3a' : '#c0c0c0';
+    ctx.lineWidth    = 3.5;
+    ctx.strokeStyle  = isWhite ? '#3a3a3a' : '#c0c0c0';
     ctx.strokeText(PIECE_UNICODE[piece], 40, 43);
     ctx.fillStyle = isWhite ? '#f5f5f0' : '#1a1a1a';
     ctx.fillText(PIECE_UNICODE[piece], 40, 43);

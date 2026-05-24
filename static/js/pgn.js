@@ -46,15 +46,15 @@
   }
 
   // Canvas-rendered Unicode piece theme (no external images)
-  var PIECE_UNICODE = {
+  const PIECE_UNICODE = {
     wP:'♙', wR:'♖', wN:'♘', wB:'♗', wQ:'♕', wK:'♔',
     bP:'♟', bR:'♜', bN:'♞', bB:'♝', bQ:'♛', bK:'♚',
   };
   function pieceDataURL(piece) {
-    var c = document.createElement('canvas');
-    c.width = c.height = 80;
-    var ctx = c.getContext('2d');
-    var isW = piece[0] === 'w';
+    const c   = document.createElement('canvas');
+    c.width   = c.height = 80;
+    const ctx = c.getContext('2d');
+    const isW = piece[0] === 'w';
     ctx.font = 'bold 58px serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.lineWidth = 3.5;
