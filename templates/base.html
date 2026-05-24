@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Chess Openings Academy{% endblock %}</title>
 
-  <!-- Chess board libraries via CDN -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
+  <!-- Chessboard CSS (vendored) -->
+  <link rel="stylesheet" href="{{ base }}/static/css/vendor-chessboard.min.css" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet"
@@ -31,18 +30,21 @@
 
   <footer class="site-footer">
     <p>Chess Openings Academy · Learn chess step by step</p>
+    <p class="footer-attribution">
+      3D chess piece models by
+      <a href="https://sketchfab.com/danielpaulse" target="_blank" rel="noopener">danielpaulse</a>
+      on Sketchfab, licensed under
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+    </p>
   </footer>
 
-  <!-- jQuery (required by chessboard.js) -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <!-- chessboard.js -->
-  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-  <!-- chess.js for move validation / FEN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-  <!-- Three.js + OrbitControls + GLTFLoader for 3D board -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- All scripts vendored (no external CDN required) -->
+  <script src="{{ base }}/static/js/vendor/jquery.min.js"></script>
+  <script src="{{ base }}/static/js/vendor/chessboard.min.js"></script>
+  <script src="{{ base }}/static/js/vendor/chess.min.js"></script>
+  <script src="{{ base }}/static/js/vendor/three.min.js"></script>
+  <script src="{{ base }}/static/js/vendor/OrbitControls.js"></script>
+  <script src="{{ base }}/static/js/vendor/GLTFLoader.js"></script>
 
   {% block scripts %}{% endblock %}
 </body>
