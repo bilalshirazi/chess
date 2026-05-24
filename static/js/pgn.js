@@ -3,11 +3,12 @@
 (function () {
   const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-  let board    = null;
-  let board3d  = null;
-  let flipped  = false;
-  let steps    = [];   // [{san, fen, moveNum, isWhite}]
-  let current  = -1;  // -1 = start position
+  let board        = null;
+  let board3d      = null;
+  let flipped      = false;
+  let highlightsOn = true;
+  let steps        = [];
+  let current      = -1;
 
   // ── PGN parsing ────────────────────────────────────────────────
   function loadPGN(pgnText) {
@@ -32,6 +33,30 @@
     });
 
     return { steps: parsed, headers };
+  }
+
+  // ── move highlight helpers ─────────────────────────────────────
+
+  function getMoveSquares(idx) {
+    if (idx < 0 || idx >= steps.length) return { from: null, to: null };
+    const step    = steps[idx];
+    const prevFen = idx === 0 ? START_FEN : steps[idx - 1].fen;
+    const chess   = new Chess(prevFen);
+    const san     = step.san.replace(/^\d+\.+\s*/, '');
+    const move    = chess.move(san);
+    return move ? { from: move.from, to: move.to } : { from: null, to: null };
+  }
+
+  function applyHighlights2D(from, to) {
+    document.querySelectorAll('.sq-hl').forEach(function (el) { el.remove(); });
+    if (!highlightsOn || !from) return;
+    [{ sq: from, cls: 'sq-hl sq-hl-from' }, { sq: to, cls: 'sq-hl sq-hl-to' }].forEach(function (h) {
+      const squareEl = document.querySelector('#chessboard [data-square="' + h.sq + '"]');
+      if (!squareEl) return;
+      const overlay = document.createElement('div');
+      overlay.className = h.cls;
+      squareEl.appendChild(overlay);
+    });
   }
 
   // ── board init ─────────────────────────────────────────────────
@@ -74,6 +99,10 @@
     const fen = currentFen();
     board.position(fen, true);
     if (board3d) board3d.setPosition(fen);
+
+    const { from, to } = getMoveSquares(current);
+    setTimeout(function () { applyHighlights2D(from, to); }, 80);
+    if (board3d) board3d.highlight(from, to, highlightsOn);
     renderMoveList();
     renderExplanation();
     renderCounter();
@@ -145,6 +174,17 @@
     initBoard(currentFen());
     if (board3d) board3d.flip(flipped);
     document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
+    const { from, to } = getMoveSquares(current);
+    setTimeout(function () { applyHighlights2D(from, to); }, 80);
+  }
+
+  function toggleHighlights() {
+    highlightsOn = !highlightsOn;
+    const btn = document.getElementById('btnHighlight');
+    btn.classList.toggle('active', highlightsOn);
+    const { from, to } = getMoveSquares(current);
+    applyHighlights2D(from, to);
+    if (board3d) board3d.highlight(from, to, highlightsOn);
   }
 
   // ── game header ────────────────────────────────────────────────
@@ -228,6 +268,7 @@
     document.getElementById('btnNext').addEventListener('click', goToNext);
     document.getElementById('btnEnd').addEventListener('click', goToEnd);
     document.getElementById('btnFlip').addEventListener('click', flipBoard);
+    document.getElementById('btnHighlight').addEventListener('click', toggleHighlights);
     document.getElementById('btnReset3d').addEventListener('click', function () {
       if (board3d) board3d._resetCamera();
     });

@@ -242,6 +242,36 @@
       this._resetCamera();
     }
 
+    // ── move highlights ───────────────────────────────────────────
+    // from/to are algebraic squares e.g. 'e2', 'e4'. enabled=false clears them.
+    highlight(from, to, enabled) {
+      if (this._hlMeshes) {
+        this._hlMeshes.forEach(m => { this.boardGroup.remove(m); m.geometry.dispose(); m.material.dispose(); });
+      }
+      this._hlMeshes = [];
+
+      if (!enabled || !from) return;
+
+      const colors = [0xffaa00, 0x44dd66];   // amber = from, green = to
+      [from, to].forEach((sq, i) => {
+        if (!sq) return;
+        const file = sq.charCodeAt(0) - 97;      // a=0 … h=7
+        const rank = parseInt(sq[1], 10);         // 1–8
+        const x    = file - 3.5;
+        const z    = (8 - rank) - 3.5;
+
+        const geo = new THREE.PlaneGeometry(0.94, 0.94);
+        const mat = new THREE.MeshBasicMaterial({
+          color: colors[i], transparent: true, opacity: 0.45, depthWrite: false, side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.position.set(x, 0.07, z);
+        this.boardGroup.add(mesh);
+        this._hlMeshes.push(mesh);
+      });
+    }
+
     // ── camera reset ──────────────────────────────────────────────
     _resetCamera() {
       this.camera.position.set(0, 8.5, 7.5);
@@ -260,6 +290,11 @@
     _animate() {
       requestAnimationFrame(() => this._animate());
       this.controls.update();
+      // Pulse highlight opacity
+      if (this._hlMeshes && this._hlMeshes.length) {
+        const op = 0.3 + Math.sin(Date.now() * 0.0025) * 0.18;
+        this._hlMeshes.forEach(m => { m.material.opacity = op; });
+      }
       this.renderer.render(this.scene, this.camera);
     }
 

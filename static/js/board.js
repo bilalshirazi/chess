@@ -3,23 +3,50 @@
 (function () {
   const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-  let board = null;
-  let board3d = null;
-  // Default orientation: white at bottom for white openings, black at bottom for black openings
-  let flipped = (OPENING_DATA.color || '').toLowerCase() === 'black';
+  let board    = null;
+  let board3d  = null;
+  let flipped  = (OPENING_DATA.color || '').toLowerCase() === 'black';
+  let highlightsOn = true;
   let currentLineIndex = 0;
-  let currentStepIndex = -1; // -1 = start position
+  let currentStepIndex = -1;
 
   // ---------- helpers ----------
 
   function currentLine()  { return OPENING_DATA.lines[currentLineIndex]; }
   function currentSteps() { return currentLine().steps; }
+  function currentFen()   { return currentStepIndex < 0 ? START_FEN : currentSteps()[currentStepIndex].fen; }
 
-  function currentFen() {
-    return currentStepIndex < 0 ? START_FEN : currentSteps()[currentStepIndex].fen;
+  // ---------- move highlight: extract from/to via chess.js ----------
+
+  function getMoveSquares(idx) {
+    if (idx < 0) return { from: null, to: null };
+    const steps   = currentSteps();
+    const step    = steps[idx];
+    const prevFen = idx === 0 ? START_FEN : steps[idx - 1].fen;
+    const chess   = new Chess(prevFen);
+    // Strip move-number prefix ("1. " or "1... ") to get bare SAN
+    const san     = (step.san || '').replace(/^\d+\.+\s*/, '');
+    const move    = chess.move(san);
+    return move ? { from: move.from, to: move.to } : { from: null, to: null };
   }
 
-  // ---------- piece theme (canvas-rendered, no external images) ----------
+  // ---------- 2D highlights ----------
+
+  function applyHighlights2D(from, to) {
+    // Remove any existing overlays
+    document.querySelectorAll('.sq-hl').forEach(function (el) { el.remove(); });
+    if (!highlightsOn || !from) return;
+
+    [{ sq: from, cls: 'sq-hl sq-hl-from' }, { sq: to, cls: 'sq-hl sq-hl-to' }].forEach(function (h) {
+      const squareEl = document.querySelector('#chessboard [data-square="' + h.sq + '"]');
+      if (!squareEl) return;
+      const overlay  = document.createElement('div');
+      overlay.className = h.cls;
+      squareEl.appendChild(overlay);
+    });
+  }
+
+  // ---------- piece theme ----------
 
   const PIECE_UNICODE = {
     wP:'♙', wR:'♖', wN:'♘', wB:'♗', wQ:'♕', wK:'♔',
@@ -54,10 +81,10 @@
     });
   }
 
-  // ---------- render state ----------
+  // ---------- render ----------
 
   function renderMoveList() {
-    const list = document.getElementById('moveList');
+    const list  = document.getElementById('moveList');
     list.innerHTML = '';
     const steps = currentSteps();
     steps.forEach(function (step, idx) {
@@ -105,6 +132,12 @@
     const fen = currentFen();
     board.position(fen, true);
     if (board3d) board3d.setPosition(fen);
+
+    const { from, to } = getMoveSquares(currentStepIndex);
+    // Small delay so chessboard.js finishes placing pieces before we overlay
+    setTimeout(function () { applyHighlights2D(from, to); }, 80);
+    if (board3d) board3d.highlight(from, to, highlightsOn);
+
     renderMoveList();
     renderExplanation();
     renderCounter();
@@ -114,8 +147,8 @@
 
   function goToStep(idx) {
     const steps = currentSteps();
-    if (idx < 0)               idx = -1;
-    if (idx >= steps.length)   idx = steps.length - 1;
+    if (idx < 0)             idx = -1;
+    if (idx >= steps.length) idx = steps.length - 1;
     currentStepIndex = idx;
     renderAll();
   }
@@ -125,18 +158,6 @@
   function goToNext()  { goToStep(currentStepIndex + 1); }
   function goToEnd()   { goToStep(currentSteps().length - 1); }
 
-  // ---------- variation tabs ----------
-
-  function switchLine(lineIdx) {
-    currentLineIndex = lineIdx;
-    currentStepIndex = -1;
-    document.querySelectorAll('.tab-btn').forEach(function (btn) {
-      btn.classList.toggle('active', parseInt(btn.dataset.lineIndex) === lineIdx);
-    });
-    initBoard(START_FEN);
-    renderAll();
-  }
-
   // ---------- flip ----------
 
   function flipBoard() {
@@ -144,6 +165,21 @@
     initBoard(currentFen());
     if (board3d) board3d.flip(flipped);
     document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
+    // Re-apply highlights after flip redraws the board
+    const { from, to } = getMoveSquares(currentStepIndex);
+    setTimeout(function () { applyHighlights2D(from, to); }, 80);
+  }
+
+  // ---------- highlights toggle ----------
+
+  function toggleHighlights() {
+    highlightsOn = !highlightsOn;
+    const btn = document.getElementById('btnHighlight');
+    btn.classList.toggle('active', highlightsOn);
+    btn.title = highlightsOn ? 'Hide move highlights' : 'Show move highlights';
+    const { from, to } = getMoveSquares(currentStepIndex);
+    applyHighlights2D(from, to);
+    if (board3d) board3d.highlight(from, to, highlightsOn);
   }
 
   // ---------- keyboard ----------
@@ -160,10 +196,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     initBoard(START_FEN);
 
-    // 3D board — only if Three.js loaded
     if (window.Chess3DBoard) {
       board3d = new Chess3DBoard('chessboard3d');
-      board3d.flip(flipped);   // apply initial orientation before models finish loading
+      board3d.flip(flipped);
     }
 
     renderAll();
@@ -173,6 +208,7 @@
     document.getElementById('btnNext').addEventListener('click', goToNext);
     document.getElementById('btnEnd').addEventListener('click', goToEnd);
     document.getElementById('btnFlip').addEventListener('click', flipBoard);
+    document.getElementById('btnHighlight').addEventListener('click', toggleHighlights);
 
     const resetBtn = document.getElementById('btnReset3d');
     if (resetBtn && board3d) {
@@ -185,4 +221,16 @@
       });
     });
   });
+
+  // ---------- variation tabs ----------
+
+  function switchLine(lineIdx) {
+    currentLineIndex = lineIdx;
+    currentStepIndex = -1;
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.classList.toggle('active', parseInt(btn.dataset.lineIndex) === lineIdx);
+    });
+    initBoard(START_FEN);
+    renderAll();
+  }
 })();

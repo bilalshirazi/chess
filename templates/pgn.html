@@ -49,6 +49,7 @@
             <button id="btnNext"  title="Next">▶</button>
             <button id="btnEnd"   title="End">⏭</button>
             <button id="btnFlip"  class="btn-flip">⬆ Black side</button>
+            <button id="btnHighlight" title="Toggle move highlights" class="btn-highlight active">◉ Highlights</button>
           </div>
           <div class="move-counter" id="moveCounter">Start position</div>
         </div>
@@ -83,6 +84,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ base }}/static/js/board3d.js?v=3"></script>
-<script src="{{ base }}/static/js/pgn.js?v=3"></script>
+<script src="{{ base }}/static/js/board3d.js?v=4"></script>
+<script src="{{ base }}/static/js/pgn.js?v=4"></script>
 {% endblock %}

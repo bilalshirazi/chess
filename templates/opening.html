@@ -59,7 +59,8 @@
             <button id="btnPrev"  title="Previous move">◀</button>
             <button id="btnNext"  title="Next move">▶</button>
             <button id="btnEnd"   title="Go to end">⏭</button>
-            <button id="btnFlip"  title="Flip board" class="btn-flip">⬆ Black</button>
+            <button id="btnFlip"  title="Flip board" class="btn-flip">⬆ Black side</button>
+            <button id="btnHighlight" title="Toggle move highlights" class="btn-highlight active">◉ Highlights</button>
           </div>
           <div class="move-counter" id="moveCounter">Start position</div>
         </div>
@@ -96,6 +97,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ base }}/static/js/board3d.js?v=3"></script>
-<script src="{{ base }}/static/js/board.js?v=3"></script>
+<script src="{{ base }}/static/js/board3d.js?v=4"></script>
+<script src="{{ base }}/static/js/board.js?v=4"></script>
 {% endblock %}
