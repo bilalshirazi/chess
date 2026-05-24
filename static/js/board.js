@@ -16,24 +16,24 @@
   function currentSteps() { return currentLine().steps; }
   function currentFen()   { return currentStepIndex < 0 ? START_FEN : currentSteps()[currentStepIndex].fen; }
 
-  // ---------- move highlight: extract from/to via chess.js ----------
+  // ---------- move info: from/to squares + capture flag ----------
 
-  function getMoveSquares(idx) {
-    if (idx < 0) return { from: null, to: null };
+  function getMoveInfo(idx) {
+    if (idx < 0) return { from: null, to: null, isCapture: false };
     const steps   = currentSteps();
     const step    = steps[idx];
     const prevFen = idx === 0 ? START_FEN : steps[idx - 1].fen;
     const chess   = new Chess(prevFen);
-    // Strip move-number prefix ("1. " or "1... ") to get bare SAN
     const san     = (step.san || '').replace(/^\d+\.+\s*/, '');
     const move    = chess.move(san);
-    return move ? { from: move.from, to: move.to } : { from: null, to: null };
+    if (!move) return { from: null, to: null, isCapture: false };
+    const isCapture = move.flags.indexOf('c') !== -1 || move.flags.indexOf('e') !== -1;
+    return { from: move.from, to: move.to, isCapture };
   }
 
   // ---------- 2D highlights ----------
 
   function applyHighlights2D(from, to) {
-    // Remove any existing overlays
     document.querySelectorAll('.sq-hl').forEach(function (el) { el.remove(); });
     if (!highlightsOn || !from) return;
 
@@ -100,7 +100,7 @@
       chip.className   = 'move-chip' + (idx === currentStepIndex ? ' active' : '');
       chip.textContent = san.replace(/^\d+\.\.\.\s*/, '').replace(/^\d+\.\s*/, '');
       chip.dataset.idx = idx;
-      chip.addEventListener('click', function () { goToStep(idx); });
+      chip.addEventListener('click', function () { goToStep(idx, true); });
       list.appendChild(chip);
     });
   }
@@ -133,8 +133,7 @@
     board.position(fen, true);
     if (board3d) board3d.setPosition(fen);
 
-    const { from, to } = getMoveSquares(currentStepIndex);
-    // Small delay so chessboard.js finishes placing pieces before we overlay
+    const { from, to } = getMoveInfo(currentStepIndex);
     setTimeout(function () { applyHighlights2D(from, to); }, 80);
     if (board3d) board3d.highlight(from, to, highlightsOn);
 
@@ -145,17 +144,21 @@
 
   // ---------- navigation ----------
 
-  function goToStep(idx) {
+  function goToStep(idx, withSound) {
     const steps = currentSteps();
     if (idx < 0)             idx = -1;
     if (idx >= steps.length) idx = steps.length - 1;
     currentStepIndex = idx;
+    if (withSound && idx >= 0 && window.ChessSounds) {
+      const { isCapture } = getMoveInfo(idx);
+      ChessSounds.play(isCapture ? 'capture' : 'move');
+    }
     renderAll();
   }
 
   function goToStart() { goToStep(-1); }
   function goToPrev()  { goToStep(currentStepIndex - 1); }
-  function goToNext()  { goToStep(currentStepIndex + 1); }
+  function goToNext()  { goToStep(currentStepIndex + 1, true); }
   function goToEnd()   { goToStep(currentSteps().length - 1); }
 
   // ---------- flip ----------
@@ -165,8 +168,7 @@
     initBoard(currentFen());
     if (board3d) board3d.flip(flipped);
     document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
-    // Re-apply highlights after flip redraws the board
-    const { from, to } = getMoveSquares(currentStepIndex);
+    const { from, to } = getMoveInfo(currentStepIndex);
     setTimeout(function () { applyHighlights2D(from, to); }, 80);
   }
 
@@ -176,10 +178,19 @@
     highlightsOn = !highlightsOn;
     const btn = document.getElementById('btnHighlight');
     btn.classList.toggle('active', highlightsOn);
-    btn.title = highlightsOn ? 'Hide move highlights' : 'Show move highlights';
-    const { from, to } = getMoveSquares(currentStepIndex);
+    const { from, to } = getMoveInfo(currentStepIndex);
     applyHighlights2D(from, to);
     if (board3d) board3d.highlight(from, to, highlightsOn);
+  }
+
+  // ---------- sound toggle ----------
+
+  function toggleSound() {
+    if (!window.ChessSounds) return;
+    const on = ChessSounds.toggle();
+    const btn = document.getElementById('btnSound');
+    btn.classList.toggle('active', on);
+    btn.textContent = on ? '🔊 Sound' : '🔇 Sound';
   }
 
   // ---------- keyboard ----------
@@ -209,6 +220,7 @@
     document.getElementById('btnEnd').addEventListener('click', goToEnd);
     document.getElementById('btnFlip').addEventListener('click', flipBoard);
     document.getElementById('btnHighlight').addEventListener('click', toggleHighlights);
+    document.getElementById('btnSound').addEventListener('click', toggleSound);
 
     const resetBtn = document.getElementById('btnReset3d');
     if (resetBtn && board3d) {

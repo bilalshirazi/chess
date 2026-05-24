@@ -21,7 +21,6 @@
 
     if (history.length === 0) return { error: 'PGN parsed but contains no moves.' };
 
-    // Replay to collect FENs
     const replay = new Chess();
     const parsed = [];
     history.forEach(function (san, idx) {
@@ -35,16 +34,18 @@
     return { steps: parsed, headers };
   }
 
-  // ── move highlight helpers ─────────────────────────────────────
+  // ── move info: from/to squares + capture flag ──────────────────
 
-  function getMoveSquares(idx) {
-    if (idx < 0 || idx >= steps.length) return { from: null, to: null };
+  function getMoveInfo(idx) {
+    if (idx < 0 || idx >= steps.length) return { from: null, to: null, isCapture: false };
     const step    = steps[idx];
     const prevFen = idx === 0 ? START_FEN : steps[idx - 1].fen;
     const chess   = new Chess(prevFen);
     const san     = step.san.replace(/^\d+\.+\s*/, '');
     const move    = chess.move(san);
-    return move ? { from: move.from, to: move.to } : { from: null, to: null };
+    if (!move) return { from: null, to: null, isCapture: false };
+    const isCapture = move.flags.indexOf('c') !== -1 || move.flags.indexOf('e') !== -1;
+    return { from: move.from, to: move.to, isCapture };
   }
 
   function applyHighlights2D(from, to) {
@@ -70,7 +71,6 @@
     });
   }
 
-  // Canvas-rendered Unicode piece theme (no external images)
   const PIECE_UNICODE = {
     wP:'♙', wR:'♖', wN:'♘', wB:'♗', wQ:'♕', wK:'♔',
     bP:'♟', bR:'♜', bN:'♞', bB:'♝', bQ:'♛', bK:'♚',
@@ -100,7 +100,7 @@
     board.position(fen, true);
     if (board3d) board3d.setPosition(fen);
 
-    const { from, to } = getMoveSquares(current);
+    const { from, to } = getMoveInfo(current);
     setTimeout(function () { applyHighlights2D(from, to); }, 80);
     if (board3d) board3d.highlight(from, to, highlightsOn);
     renderMoveList();
@@ -121,14 +121,12 @@
       }
       const chip = document.createElement('span');
       chip.className   = 'move-chip' + (idx === current ? ' active' : '');
-      // Strip the "1. " or "1… " prefix for the chip label
       chip.textContent = step.san.replace(/^\d+[.…]+\s*/, '');
       chip.dataset.idx = idx;
-      chip.addEventListener('click', function () { goTo(idx); });
+      chip.addEventListener('click', function () { goTo(idx, true); });
       list.appendChild(chip);
     });
 
-    // Scroll active chip into view
     const active = list.querySelector('.move-chip.active');
     if (active) active.scrollIntoView({ block: 'nearest' });
   }
@@ -157,16 +155,20 @@
   }
 
   // ── navigation ─────────────────────────────────────────────────
-  function goTo(idx) {
-    if (idx < -1)           idx = -1;
+  function goTo(idx, withSound) {
+    if (idx < -1)            idx = -1;
     if (idx >= steps.length) idx = steps.length - 1;
     current = idx;
+    if (withSound && idx >= 0 && window.ChessSounds) {
+      const { isCapture } = getMoveInfo(idx);
+      ChessSounds.play(isCapture ? 'capture' : 'move');
+    }
     renderAll();
   }
 
   function goToStart() { goTo(-1); }
   function goToPrev()  { goTo(current - 1); }
-  function goToNext()  { goTo(current + 1); }
+  function goToNext()  { goTo(current + 1, true); }
   function goToEnd()   { goTo(steps.length - 1); }
 
   function flipBoard() {
@@ -174,7 +176,7 @@
     initBoard(currentFen());
     if (board3d) board3d.flip(flipped);
     document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
-    const { from, to } = getMoveSquares(current);
+    const { from, to } = getMoveInfo(current);
     setTimeout(function () { applyHighlights2D(from, to); }, 80);
   }
 
@@ -182,9 +184,17 @@
     highlightsOn = !highlightsOn;
     const btn = document.getElementById('btnHighlight');
     btn.classList.toggle('active', highlightsOn);
-    const { from, to } = getMoveSquares(current);
+    const { from, to } = getMoveInfo(current);
     applyHighlights2D(from, to);
     if (board3d) board3d.highlight(from, to, highlightsOn);
+  }
+
+  function toggleSound() {
+    if (!window.ChessSounds) return;
+    const on = ChessSounds.toggle();
+    const btn = document.getElementById('btnSound');
+    btn.classList.toggle('active', on);
+    btn.textContent = on ? '🔊 Sound' : '🔇 Sound';
   }
 
   // ── game header ────────────────────────────────────────────────
@@ -239,7 +249,6 @@
 
   // ── init ───────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
-    // File upload
     document.getElementById('pgnFileInput').addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -250,25 +259,23 @@
       reader.readAsText(file);
     });
 
-    // Load button
     document.getElementById('pgnLoadBtn').addEventListener('click', function () {
       startGame(document.getElementById('pgnText').value);
     });
 
-    // Load another
     document.getElementById('btnLoadAnother').addEventListener('click', function () {
       document.getElementById('boardSection').style.display = 'none';
       document.getElementById('pgnInputSection').style.display = '';
       if (board) { board.destroy(); board = null; }
     });
 
-    // Nav buttons
     document.getElementById('btnStart').addEventListener('click', goToStart);
     document.getElementById('btnPrev').addEventListener('click', goToPrev);
     document.getElementById('btnNext').addEventListener('click', goToNext);
     document.getElementById('btnEnd').addEventListener('click', goToEnd);
     document.getElementById('btnFlip').addEventListener('click', flipBoard);
     document.getElementById('btnHighlight').addEventListener('click', toggleHighlights);
+    document.getElementById('btnSound').addEventListener('click', toggleSound);
     document.getElementById('btnReset3d').addEventListener('click', function () {
       if (board3d) board3d._resetCamera();
     });
