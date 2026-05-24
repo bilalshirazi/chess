@@ -200,16 +200,30 @@ OPENINGS = {
                     {
                         "move": "c5",
                         "san": "6... c5",
-                        "fen": "rnbq1rk1/pp2bppp/4pn2/2pp4/3P4/3BPN2/PPPN1PPP/R1BQ1RK1 w KQ c6 0 7",
+                        "fen": "rnbq1rk1/pp2bppp/4pn2/2pp4/3P4/3BPN2/PPPN1PPP/R1BQ1RK1 w - - 0 7",
                         "explanation": "Black strikes in the centre — the natural counter.",
                     },
                     {
+                        "move": "c3",
+                        "san": "7. c3",
+                        "fen": "rnbq1rk1/pp2bppp/4pn2/2pp4/3P4/2PBPN2/PP1N1PPP/R1BQ1RK1 b - - 0 7",
+                        "explanation": "A key preparatory move. c3 shores up d4 so that after e4, "
+                        "if Black advances c4, the bishop can safely retreat to c2 "
+                        "with no loss of tempo. Never play e4 without c3 first!",
+                    },
+                    {
+                        "move": "Nc6",
+                        "san": "7... Nc6",
+                        "fen": "r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2PBPN2/PP1N1PPP/R1BQ1RK1 w - - 1 8",
+                        "explanation": "Black develops the queen's knight, reinforcing d5 and c5.",
+                    },
+                    {
                         "move": "e4",
-                        "san": "7. e4",
-                        "fen": "rnbq1rk1/pp2bppp/4pn2/2pp4/3PP3/3B1N2/PPPN1PPP/R1BQ1RK1 b kq e3 0 7",
-                        "explanation": "The Colle pawn break! White opens the centre with e4. The "
-                        "bishop on d3 now attacks h7 with lethal force. Black must be "
-                        "very careful. This is where beginner opponents often get into "
+                        "san": "8. e4",
+                        "fen": "r1bq1rk1/pp2bppp/2n1pn2/2pp4/3PP3/2PB1N2/PP1N1PPP/R1BQ1RK1 b - - 0 8",
+                        "explanation": "The Colle pawn break! With c3 already in place, e4 is safe. "
+                        "The bishop on d3 now attacks h7 with lethal force. Black must be "
+                        "very careful — this is where beginner opponents often get into "
                         "serious trouble.",
                     },
                 ],
