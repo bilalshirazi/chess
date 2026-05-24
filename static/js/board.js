@@ -54,24 +54,50 @@
   };
 
   function pieceDataURL(piece) {
-    const canvas  = document.createElement('canvas');
-    canvas.width  = 80; canvas.height = 80;
-    const ctx     = canvas.getContext('2d');
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 80;
+    const ctx = canvas.getContext('2d');
     const isWhite = piece[0] === 'w';
-    ctx.font         = 'bold 52px serif';
-    ctx.textAlign    = 'center';
+
+    // iOS Safari can fall back to a different font for individual chess glyphs
+    // (notably the black pawn), causing inconsistent visual sizes. Use a symbol
+    // font stack and scale glyphs to fit a consistent box.
+    const glyph = PIECE_UNICODE[piece] + '\uFE0E'; // force text presentation when available
+    const fontFamily =
+      '"Apple Symbols","Segoe UI Symbol","Noto Sans Symbols2","Noto Sans Symbols",' +
+      '"DejaVu Sans","Arial Unicode MS",serif';
+    const baseFontSize = 56;
+    const padding = 10;
+    const targetBox = 80 - padding * 2;
+
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
+    ctx.font = '600 ' + baseFontSize + 'px ' + fontFamily;
+    const metrics = ctx.measureText(glyph);
+    const measuredWidth = (metrics.actualBoundingBoxLeft != null && metrics.actualBoundingBoxRight != null)
+      ? (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight)
+      : metrics.width;
+    const measuredHeight = (metrics.actualBoundingBoxAscent != null && metrics.actualBoundingBoxDescent != null)
+      ? (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+      : baseFontSize;
+    const safeWidth = Math.max(measuredWidth, 1);
+    const safeHeight = Math.max(measuredHeight, 1);
+    const scale = Math.min(targetBox / safeWidth, targetBox / safeHeight, 1);
+    const fontSize = Math.max(1, Math.floor(baseFontSize * scale));
+    ctx.font = '600 ' + fontSize + 'px ' + fontFamily;
+
     // Shadow makes white pieces visible on light squares
     ctx.shadowColor   = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur    = 3;
+    ctx.shadowBlur    = Math.max(2, Math.round(fontSize / 18));
     ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 1;
-    ctx.lineWidth    = 4;
+    ctx.shadowOffsetY = Math.max(1, Math.round(fontSize / 56));
+    ctx.lineWidth    = Math.max(3, Math.round(fontSize / 14));
     ctx.strokeStyle  = isWhite ? '#1a1a1a' : '#d0d0d0';
-    ctx.strokeText(PIECE_UNICODE[piece], 40, 42);
+    ctx.strokeText(glyph, 40, 42);
     ctx.fillStyle = isWhite ? '#ffffff' : '#111111';
-    ctx.fillText(PIECE_UNICODE[piece], 40, 42);
-    return canvas.toDataURL();
+    ctx.fillText(glyph, 40, 42);
+    return canvas.toDataURL('image/png');
   }
 
   // ---------- board init ----------
