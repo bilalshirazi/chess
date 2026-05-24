@@ -242,19 +242,20 @@
     }
 
     _tuneWhiteMaterials(group) {
-      // Bright warm white with strong emissive so pieces are clearly visible on light squares.
-      const warmWhite = this._srgbColor(0xfffbe8);
+      // Warm ivory — clearly readable as "white pieces" without blending into light squares.
+      const ivory = this._srgbColor(0xddd0b0);
+      const ivoryEmissive = this._srgbColor(0xddd0b0);
       group.traverse(o => {
         if (!o.isMesh || !o.material) return;
         const mats = Array.isArray(o.material) ? o.material : [o.material];
         mats.forEach(mat => {
-          if (mat && mat.color) mat.color.copy(warmWhite);
-          if (mat && typeof mat.roughness === 'number') mat.roughness = 0.85;
+          if (mat && mat.color) mat.color.copy(ivory);
+          if (mat && typeof mat.roughness === 'number') mat.roughness = 0.75;
           if (mat && typeof mat.metalness === 'number') mat.metalness = 0.0;
-          if (mat && mat.specular) mat.specular.setScalar(0.1);
+          if (mat && mat.specular) mat.specular.setScalar(0.08);
           if (mat && mat.emissive) {
-            mat.emissive.copy(warmWhite);
-            if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 0.35;
+            mat.emissive.copy(ivoryEmissive);
+            if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 0.18;
           }
         });
       });
