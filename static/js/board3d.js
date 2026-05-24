@@ -13,6 +13,7 @@
   const MODELS_BASE = (window.STATIC_BASE || '/static') + '/models/';
 
   const TARGET_HEIGHT = 0.82;
+  const FALLBACK_SQUARES = { light: 0xf0d9b5, dark: 0xb58863 };
 
   // ── Chess3DBoard ──────────────────────────────────────────────────
   class Chess3DBoard {
@@ -25,6 +26,7 @@
       this.pendingFen  = null;
       this.loaded      = false;
       this.flipped     = false;
+      this.squareTheme = this._get2DSquareTheme() || FALLBACK_SQUARES;
 
       this._buildRenderer();
       this._buildScene();
@@ -48,6 +50,8 @@
       this.renderer.setSize(size, size);
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+      // Match CSS colors more closely (esp. board squares) by outputting in sRGB.
+      this.renderer.outputEncoding = THREE.sRGBEncoding;
       this.container.appendChild(this.renderer.domElement);
     }
 
@@ -67,18 +71,21 @@
       // Wood border
       const border = new THREE.Mesh(
         new THREE.BoxGeometry(9.6, 0.18, 9.6),
-        new THREE.MeshLambertMaterial({ color: 0x6b3a1f })
+        new THREE.MeshLambertMaterial({ color: this._srgbColor(0x6b3a1f) })
       );
       border.position.y    = -0.06;
       border.receiveShadow = true;
       this.boardGroup.add(border);
+
+      const lightMat = new THREE.MeshLambertMaterial({ color: this._srgbColor(this.squareTheme.light) });
+      const darkMat  = new THREE.MeshLambertMaterial({ color: this._srgbColor(this.squareTheme.dark) });
 
       // 64 squares
       for (let r = 0; r < 8; r++) {
         for (let f = 0; f < 8; f++) {
           const sq = new THREE.Mesh(
             new THREE.BoxGeometry(1, 0.12, 1),
-            new THREE.MeshLambertMaterial({ color: (r + f) % 2 === 0 ? 0xf0d9b5 : 0xb58863 })
+            (r + f) % 2 === 0 ? lightMat : darkMat
           );
           sq.position.set(f - 3.5, 0, r - 3.5);
           sq.receiveShadow = true;
@@ -102,10 +109,15 @@
         : ['8','7','6','5','4','3','2','1'];
 
       for (let i = 0; i < 8; i++) {
-        // File labels along the near edge (z = +4.65)
-        const fs = this._labelSprite(FILES[i], i - 3.5, 4.65);
-        // Rank labels along the left edge (x = -4.65)
-        const rs = this._labelSprite(RANKS[i], -4.65, i - 3.5);
+        // Keep labels visible on the viewer's near/left edges even after flip().
+        // Since the entire boardGroup rotates, we place labels on opposite edges when flipped.
+        const nearZ = this.flipped ? -4.65 : 4.65;
+        const leftX = this.flipped ? 4.65 : -4.65;
+
+        // File labels along the near edge
+        const fs = this._labelSprite(FILES[i], i - 3.5, nearZ);
+        // Rank labels along the left edge
+        const rs = this._labelSprite(RANKS[i], leftX, i - 3.5);
         this.boardGroup.add(fs);
         this.boardGroup.add(rs);
         this._labelSprites.push(fs, rs);
@@ -118,7 +130,10 @@
       const ctx = c.getContext('2d');
       ctx.font = 'bold 40px sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = 'rgba(0,0,0,0.55)';
       ctx.fillStyle = '#c9a84c';
+      ctx.strokeText(text, 32, 32);
       ctx.fillText(text, 32, 32);
       const sp = new THREE.Sprite(
         new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true })
@@ -126,6 +141,35 @@
       sp.scale.set(0.55, 0.55, 1);
       sp.position.set(x, 0.1, z);
       return sp;
+    }
+
+    _srgbColor(hex) {
+      const c = new THREE.Color(hex);
+      // Three r134 expects linear-space colors; convert from sRGB hex for CSS parity.
+      if (c.convertSRGBToLinear) c.convertSRGBToLinear();
+      return c;
+    }
+
+    _cssRgbToHexInt(css) {
+      if (!css) return null;
+      const m = css.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      if (!m) return null;
+      const r = Math.min(255, Math.max(0, parseInt(m[1], 10)));
+      const g = Math.min(255, Math.max(0, parseInt(m[2], 10)));
+      const b = Math.min(255, Math.max(0, parseInt(m[3], 10)));
+      return (r << 16) | (g << 8) | b;
+    }
+
+    _get2DSquareTheme() {
+      // Chessboard.js uses hashed classnames; read computed colors so 3D stays in sync.
+      const lightEl = document.querySelector('#chessboard .white-1e1d7') || document.querySelector('.white-1e1d7');
+      const darkEl  = document.querySelector('#chessboard .black-3c85d') || document.querySelector('.black-3c85d');
+      if (!lightEl || !darkEl) return null;
+
+      const light = this._cssRgbToHexInt(getComputedStyle(lightEl).backgroundColor);
+      const dark  = this._cssRgbToHexInt(getComputedStyle(darkEl).backgroundColor);
+      if (light == null || dark == null) return null;
+      return { light, dark };
     }
 
     // ── lighting ──────────────────────────────────────────────────
@@ -197,7 +241,27 @@
         g.position.y = 0.07 - b2.min.y;
       });
 
+      this._tuneWhiteMaterials(white);
       return { white, black };
+    }
+
+    _tuneWhiteMaterials(group) {
+      // Warm/matte white so pieces read clearly on light squares.
+      const warmWhite = this._srgbColor(0xfff6ee);
+      group.traverse(o => {
+        if (!o.isMesh || !o.material) return;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(mat => {
+          if (mat && mat.color) mat.color.copy(warmWhite);
+          if (mat && typeof mat.roughness === 'number') mat.roughness = 0.92;
+          if (mat && typeof mat.metalness === 'number') mat.metalness = 0.05;
+          if (mat && mat.specular) mat.specular.setScalar(0.15);
+          if (mat && mat.emissive) {
+            mat.emissive.copy(warmWhite);
+            if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 0.08;
+          }
+        });
+      });
     }
 
     // ── position update ───────────────────────────────────────────
