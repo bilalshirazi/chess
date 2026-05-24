@@ -48,6 +48,13 @@ def build() -> None:
         html = tmpl.render(**ctx_base, opening=opening)
         (out_dir / "index.html").write_text(html, encoding="utf-8")
 
+    # PGN viewer page
+    pgn_dir = OUT / "pgn"
+    pgn_dir.mkdir(parents=True)
+    tmpl = env.get_template("pgn.html")
+    html = tmpl.render(**ctx_base)
+    (pgn_dir / "index.html").write_text(html, encoding="utf-8")
+
     # GitHub Pages needs a .nojekyll file to serve files starting with _
     (OUT / ".nojekyll").touch()
 

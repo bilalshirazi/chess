@@ -5,7 +5,8 @@
 
   let board = null;
   let board3d = null;
-  let flipped = false;
+  // Default orientation: white at bottom for white openings, black at bottom for black openings
+  let flipped = (OPENING_DATA.color || '').toLowerCase() === 'black';
   let currentLineIndex = 0;
   let currentStepIndex = -1; // -1 = start position
 
@@ -141,7 +142,8 @@
   function flipBoard() {
     flipped = !flipped;
     initBoard(currentFen());
-    document.getElementById('btnFlip').textContent = flipped ? '⬆ White' : '⬆ Black';
+    if (board3d) board3d.flip(flipped);
+    document.getElementById('btnFlip').textContent = flipped ? '⬆ White side' : '⬆ Black side';
   }
 
   // ---------- keyboard ----------
@@ -161,7 +163,7 @@
     // 3D board — only if Three.js loaded
     if (window.Chess3DBoard) {
       board3d = new Chess3DBoard('chessboard3d');
-      board3d.setPosition(START_FEN);
+      board3d.flip(flipped);   // apply initial orientation before models finish loading
     }
 
     renderAll();

@@ -58,7 +58,7 @@ nav a { color: var(--text-muted); font-size: 0.9rem; transition: color 0.2s; }
 nav a:hover { color: var(--text); }
 
 /* ========== Main ========== */
-main { flex: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem; }
+main { flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem; }
 
 /* ========== Footer ========== */
 .footer-attribution {
@@ -247,15 +247,24 @@ main { flex: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 2rem 1.
   flex-wrap: wrap;
 }
 
-/* dual 2D+3D wrapper */
+/* dual 2D+3D wrapper — 2D fixed, 3D takes remaining space */
 .boards-dual {
   display: flex;
   gap: 1.25rem;
-  flex-wrap: wrap;
+  align-items: flex-start;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
-.board-panel { flex-shrink: 0; }
+/* 2D panel: fixed width */
+.board-panel-2d { flex-shrink: 0; }
+
+/* 3D panel: grows to fill available space up to a comfortable max */
+.board-panel-3d {
+  flex: 1 1 var(--board-size);
+  min-width: var(--board-size);
+  max-width: 580px;
+}
 
 .board-panel-label {
   font-size: 0.75rem;
@@ -273,18 +282,18 @@ main { flex: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 2rem 1.
   border: 2px solid var(--border);
 }
 
-/* 3D canvas container — matches 2D board size */
+/* 3D canvas container — fills its panel and stays square */
 .board-3d-wrap {
   position: relative;
-  width: var(--board-size);
-  height: var(--board-size);
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 6px;
   overflow: hidden;
   border: 2px solid var(--border);
   cursor: grab;
 }
 .board-3d-wrap:active { cursor: grabbing; }
-.board-3d-wrap canvas { display: block; }
+.board-3d-wrap canvas { display: block; width: 100% !important; height: 100% !important; }
 
 .board-3d-loader {
   position: absolute;
@@ -385,16 +394,90 @@ main { flex: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 2rem 1.
 }
 .explanation-box p { color: var(--text-muted); }
 
+/* ========== PGN Viewer ========== */
+.pgn-input-section { margin-bottom: 2rem; }
+
+.pgn-input-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 680px;
+}
+
+.pgn-input-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+
+.pgn-file-label {
+  display: inline-block;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 0.15s;
+  white-space: nowrap;
+}
+.pgn-file-label:hover { border-color: var(--accent); color: var(--accent); }
+input[type="file"] { display: none; }
+
+.pgn-or { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin: 0.75rem 0; }
+
+.pgn-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  padding: 0.75rem;
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.pgn-textarea:focus { outline: none; border-color: var(--accent); }
+
+.pgn-load-btn {
+  display: block;
+  margin-top: 1rem;
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s;
+}
+.pgn-load-btn:hover { background: var(--accent2); }
+
+.pgn-error {
+  margin-top: 0.75rem;
+  color: #e57373;
+  font-size: 0.875rem;
+}
+
+.pgn-game-info {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+.pgn-game-info strong { color: var(--text); }
+
 /* ========== Responsive ========== */
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .boards-dual { flex-direction: column; }
+  .board-panel-3d { max-width: var(--board-size); }
 }
 
 @media (max-width: 700px) {
   :root { --board-size: min(340px, calc(100vw - 2rem)); }
   h1 { font-size: 1.8rem; }
-  .board-layout  { flex-direction: column; }
-  .boards-dual   { flex-direction: column; }
-  .moves-panel   { min-width: unset; width: 100%; }
-  .board-3d-wrap { width: var(--board-size); height: var(--board-size); }
+  .board-layout { flex-direction: column; }
+  .moves-panel  { min-width: unset; width: 100%; }
 }

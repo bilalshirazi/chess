@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Chess Openings Academy — Learn Classic Openings{% endblock %}
+{% block title %}Chess Academy — Learn Classic Openings{% endblock %}
 
 {% block content %}
 <section class="hero">
-  <h1>Chess Openings Academy</h1>
+  <h1>Chess Academy</h1>
   <p class="hero-subtitle">
-    Step-by-step guides for four classic openings — each with a live chess board,
-    move-by-move explanations, and key ideas explained in plain English.
+    Step-by-step guides to classic openings, plus a full PGN viewer to replay any game —
+    each with a live 2D board and a rotatable 3D view.
     Perfect for beginners and improving players alike.
   </p>
 </section>
@@ -26,6 +26,21 @@
       </div>
     </a>
     {% endfor %}
+  </div>
+</section>
+
+<section class="openings-grid-section">
+  <h2 class="section-title">Tools</h2>
+  <div class="openings-grid">
+    <a href="{{ base }}/pgn" class="opening-card">
+      <div class="card-emoji">📋</div>
+      <div class="card-body">
+        <h3>PGN Viewer</h3>
+        <span class="color-badge" style="background:var(--bg3);color:var(--text-muted);">Any game</span>
+        <p class="tagline">Paste or upload a PGN file and step through the moves on both 2D and 3D boards.</p>
+        <span class="explore-link">Open viewer →</span>
+      </div>
+    </a>
   </div>
 </section>
 

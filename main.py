@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 
 from openings_data import OPENINGS
 
-app = FastAPI(title="Chess Openings Academy")
+app = FastAPI(title="Chess Academy")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -27,6 +27,13 @@ async def opening(request: Request, opening_id: str):
         return HTMLResponse("<h1>Opening not found</h1>", status_code=404)
     return templates.TemplateResponse(
         "opening.html", {"request": request, "opening": opening, "base": BASE}
+    )
+
+
+@app.get("/pgn", response_class=HTMLResponse)
+async def pgn_viewer(request: Request):
+    return templates.TemplateResponse(
+        "pgn.html", {"request": request, "base": BASE}
     )
 
 

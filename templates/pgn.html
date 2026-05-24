@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}PGN Viewer — Chess Academy{% endblock %}
+
+{% block content %}
+<div class="opening-page">
+
+  <div class="opening-header">
+    <div class="opening-title-row">
+      <span class="opening-emoji">📋</span>
+      <div>
+        <h1>PGN Viewer</h1>
+        <span class="color-badge" style="background:var(--bg3);color:var(--text-muted);">Paste or upload any game</span>
+      </div>
+    </div>
+    <p class="opening-tagline">Load a PGN file to step through any chess game on the 2D and 3D boards.</p>
+  </div>
+
+  <!-- PGN input -->
+  <section class="pgn-input-section" id="pgnInputSection">
+    <div class="pgn-input-box">
+      <div class="pgn-input-row">
+        <label class="pgn-file-label" for="pgnFileInput">📁 Upload .pgn file</label>
+        <input type="file" id="pgnFileInput" accept=".pgn,.txt" />
+      </div>
+      <p class="pgn-or">— or paste PGN below —</p>
+      <textarea id="pgnText" class="pgn-textarea" rows="8"
+        placeholder='[Event "?"]&#10;[White "Player 1"]&#10;[Black "Player 2"]&#10;&#10;1. e4 e5 2. Nf3 Nc6 3. Bb5 ...'></textarea>
+      <button id="pgnLoadBtn" class="pgn-load-btn">Load Game ▶</button>
+      <p id="pgnError" class="pgn-error" style="display:none"></p>
+    </div>
+  </section>
+
+  <!-- Board section (hidden until game loaded) -->
+  <section class="board-section" id="boardSection" style="display:none">
+    <div class="pgn-game-header" id="pgnGameHeader"></div>
+    <h2>Game Viewer</h2>
+
+    <div class="board-layout">
+      <div class="boards-dual">
+
+        <!-- 2D board -->
+        <div class="board-panel board-panel-2d">
+          <div class="board-panel-label">2D — Top Down</div>
+          <div id="chessboard"></div>
+          <div class="board-controls">
+            <button id="btnStart" title="Start">⏮</button>
+            <button id="btnPrev"  title="Previous">◀</button>
+            <button id="btnNext"  title="Next">▶</button>
+            <button id="btnEnd"   title="End">⏭</button>
+            <button id="btnFlip"  class="btn-flip">⬆ Black side</button>
+          </div>
+          <div class="move-counter" id="moveCounter">Start position</div>
+        </div>
+
+        <!-- 3D board -->
+        <div class="board-panel board-panel-3d">
+          <div class="board-panel-label">3D — Drag to rotate · Scroll to zoom</div>
+          <div id="chessboard3d" class="board-3d-wrap">
+            <div id="board3d-loader" class="board-3d-loader">Loading models…</div>
+          </div>
+          <div class="board-controls">
+            <button id="btnReset3d">↺ Reset view</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Move list -->
+      <div class="moves-panel">
+        <div class="move-list" id="moveList"></div>
+        <div class="explanation-box" id="explanationBox">
+          <p>Use ▶ or arrow keys to step through the game.</p>
+        </div>
+        <button id="btnLoadAnother" class="pgn-load-btn" style="margin-top:1rem;width:100%">
+          ← Load another game
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ base }}/static/js/board3d.js"></script>
+<script src="{{ base }}/static/js/pgn.js"></script>
+{% endblock %}
